@@ -1,0 +1,180 @@
+/* Variáveis de Cores e Fontes (melhorar a manutenção) */
+:root {
+    --bg-color-dark: #26252c;
+    --form-bg: #171717;
+    --input-bg: #1e1e1e;
+    --text-color: #d3d3d3;
+    --heading-color: #ffffff;
+    --accent-color: #4CAF50; /* Verde para sucesso/ações principais */
+    --error-color: #f44336; /* Vermelho para erros */
+    --hover-dark: #0f0f0f; /* Cor mais escura para hover */
+    --border-color: #444; /* Cor para bordas sutis */
+    --focus-color: #61afef; /* Azul claro para foco */
+
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Exemplo, pode ser 'Poppins', 'Roboto', 'Inter' */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Use min-height para garantir que o corpo ocupe a altura total */
+    margin: 0;
+    background-color: var(--bg-color-dark);
+    font-family: var(--font-family);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow: hidden; /* Evita scroll desnecessário em telas pequenas */
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px; /* Padding para telas menores */
+    box-sizing: border-box; /* Garante que o padding não adicione tamanho total */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Aumentei o espaçamento entre os elementos */
+    padding: 30px 40px; /* Mais padding para um visual mais aberto */
+    background-color: var(--form-bg);
+    border-radius: 15px; /* Bordas um pouco mais suaves */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Sombra inicial mais pronunciada */
+    transition: all 0.3s ease-in-out; /* Transição mais suave */
+    max-width: 400px; /* Largura máxima para o formulário */
+    width: 100%; /* Garante que ele ocupe a largura disponível */
+}
+
+.form:hover {
+    transform: translateY(-5px); /* Um leve levantamento ao invés de escala */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); /* Sombra mais intensa no hover */
+}
+
+#heading {
+    text-align: center;
+    margin-bottom: 25px; /* Mais espaço abaixo do título */
+    color: var(--heading-color);
+    font-size: 1.8em; /* Tamanho maior para o título */
+    font-weight: 600; /* Mais negrito */
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre ícone e input */
+    padding: 10px 0; /* Padding vertical para o campo */
+    border-bottom: 1px solid var(--border-color); /* Borda inferior sutil */
+    background-color: var(--input-bg); /* Fundo sutilmente diferente para o campo */
+    border-radius: 5px; /* Pequeno arredondamento */
+    padding-left: 10px; /* Padding para o ícone */
+}
+
+.input-icon {
+    height: 1.2em; /* Tamanho levemente menor para os ícones */
+    width: 1.2em;
+    fill: var(--text-color); /* Cor dos ícones */
+    opacity: 0.7; /* Ícones mais sutis */
+}
+
+.input-field {
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: var(--text-color);
+    font-size: 1em;
+    padding: 5px 0; /* Ajuste interno para o texto do input */
+}
+
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.5); /* Placeholder mais claro */
+}
+
+.input-field:focus {
+    border-color: var(--focus-color); /* Borda inferior muda de cor ao focar */
+    box-shadow: 0 1px 0 0 var(--focus-color); /* Linha de foco sutil */
+}
+
+/* Botão de Login */
+.action-button {
+    padding: 12px 25px; /* Mais padding para o botão */
+    margin-top: 25px; /* Mais espaço acima do botão */
+    border-radius: 8px; /* Bordas mais arredondadas */
+    border: none;
+    outline: none;
+    background-color: var(--accent-color); /* Cor verde de destaque */
+    color: white;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: #409244; /* Verde mais escuro no hover */
+    transform: translateY(-2px); /* Efeito de levantamento no hover */
+}
+
+/* Link Esqueceu a Senha */
+.forgot-password-link {
+    display: block; /* Garante que o link ocupe sua própria linha */
+    text-align: center;
+    margin-top: 15px; /* Espaçamento acima do link */
+    color: var(--text-color);
+    font-size: 0.9em;
+    text-decoration: none; /* Remover sublinhado padrão */
+    transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+    color: var(--focus-color); /* Cor de foco no hover */
+    text-decoration: underline; /* Adicionar sublinhado no hover */
+}
+
+/* Estilos para a divResposta (Popup de Mensagens) */
+#divResposta {
+    display: none;
+    position: fixed;
+    top: 25px; /* Afastar um pouco mais da borda */
+    right: 25px;
+    background-color: var(--error-color); /* Padrão vermelho para erro */
+    color: white;
+    padding: 18px 28px; /* Mais padding para o pop-up */
+    border-radius: 10px; /* Mais arredondado */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra mais pronunciada */
+    z-index: 9999;
+    font-size: 1.05em;
+    font-weight: 500;
+    animation: fadein 0.6s forwards, fadeout 0.6s 4.4s forwards; /* Ajustar tempos */
+    max-width: 300px; /* Limitar largura do popup */
+    text-align: center;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeout {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}

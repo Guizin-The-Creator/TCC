@@ -1,0 +1,267 @@
+/* Variáveis de Cores e Fontes */
+:root {
+  --bg-color-dark: #1a1a2e; /* Fundo principal mais profundo */
+  --sidebar-bg: #16213e; /* Cor da sidebar */
+  --sidebar-hover: #0f3460; /* Hover da sidebar */
+  --text-color: #e0e0e0; /* Texto claro */
+  --heading-color: #ffffff; /* Títulos */
+  --accent-color: #e94560; /* Cor de destaque (rosa/vermelho) */
+  --accent-dark: #b82b4a; /* Destaque mais escuro */
+  --active-item-bg: #e94560; /* Fundo do item ativo */
+  --active-item-border: #f7b731; /* Borda do item ativo (amarelo/laranja) */
+  --card-bg: #0f172a; /* Fundo dos cards de conteúdo */
+  --border-color: rgba(255, 255, 255, 0.1); /* Borda para divisórias e cards */
+  --shadow-color: rgba(0, 0, 0, 0.5); /* Cor da sombra */
+
+  --font-family: 'Inter', sans-serif; /* Fonte moderna */
+  --transition-speed: 0.3s;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background-color: var(--bg-color-dark);
+  display: flex; /* Usar flexbox para o layout principal */
+  min-height: 100vh;
+  overflow-x: hidden; /* Evita scroll horizontal indesejado */
+}
+
+/* Wrapper para o dashboard (sidebar + main content) */
+.dashboard-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px; /* Largura inicial recolhida */
+  height: 100vh;
+  background-color: var(--sidebar-bg);
+  overflow-x: hidden; /* Oculta o scroll horizontal */
+  overflow-y: auto; /* Permite scroll vertical se o conteúdo for muito longo */
+  transition: width var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  box-shadow: 4px 0 15px var(--shadow-color); /* Sombra mais pronunciada */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px; /* Espaço no topo */
+}
+
+.sidebar:hover {
+  width: 260px; /* Largura expandida */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 20px 20px 20px; /* Padding ajustado */
+  white-space: nowrap; /* Evita quebra de linha */
+  opacity: 0.8; /* Levemente mais transparente */
+  transition: opacity var(--transition-speed) ease;
+}
+
+.sidebar:not(:hover) .sidebar-header .system-name {
+  display: none; /* Esconde o nome do sistema quando recolhido */
+}
+
+.sidebar-header .logo-icon {
+  min-width: 30px; /* Tamanho fixo para o ícone do logo */
+  height: 30px;
+  fill: var(--accent-color); /* Cor do ícone do logo */
+}
+
+.sidebar-header .system-name {
+  font-size: 1.4em; /* Tamanho do nome do sistema */
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.menu-category {
+  font-size: 0.8em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px 20px 5px 20px; /* Espaçamento da categoria */
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.sidebar:hover .menu-category {
+  opacity: 1; /* Mostra a categoria ao expandir */
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaço entre ícone e texto */
+  padding: 12px 20px; /* Padding para o botão */
+  color: var(--text-color);
+  background: none;
+  border: none;
+  width: 100%;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease,
+              border-left var(--transition-speed) ease,
+              color var(--transition-speed) ease;
+  border-left: 4px solid transparent; /* Borda esquerda para destaque */
+  text-decoration: none;
+  white-space: nowrap; /* Evita quebra de linha */
+}
+
+.menu-button:hover {
+  background-color: var(--sidebar-hover);
+  color: var(--heading-color); /* Mudar cor do texto no hover */
+  border-left: 4px solid var(--accent-color); /* Borda mais vibrante no hover */
+}
+
+.menu-button.active {
+  background-color: var(--active-item-bg); /* Fundo para item ativo */
+  color: var(--heading-color); /* Texto branco para item ativo */
+  border-left: 4px solid var(--active-item-border); /* Borda amarela para item ativo */
+  font-weight: 500;
+}
+
+.menu-button .menu-icon {
+  min-width: 24px; /* Tamanho fixo para os ícones */
+  height: 24px;
+  fill: currentColor; /* Ícone herda a cor do texto do botão */
+  transition: fill var(--transition-speed) ease;
+}
+
+.sidebar:not(:hover) .menu-button .label {
+  display: none; /* Esconde os rótulos quando a sidebar está recolhida */
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 15px 20px; /* Margem ajustada */
+  opacity: 0.6;
+}
+
+/* Conteúdo principal */
+.main-content {
+  flex-grow: 1; /* Ocupa o espaço restante */
+  margin-left: 60px; /* Margem inicial para a sidebar recolhida */
+  padding: 30px; /* Padding geral do conteúdo */
+  transition: margin-left var(--transition-speed) ease;
+  box-sizing: border-box; /* Garante que o padding não adicione largura extra */
+  display: flex; /* Adicionado para centralizar o conteúdo dentro do main-content */
+  flex-direction: column; /* Organiza os itens em coluna */
+  align-items: center; /* Centraliza horizontalmente o conteúdo (header, sections) */
+}
+
+.sidebar:hover + .main-content {
+  margin-left: 260px; /* Margem quando a sidebar está expandida */
+}
+
+.main-header {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center; /* Centraliza o título */
+  width: 100%; /* Ocupa a largura total para permitir centralização */
+  align-items: center;
+  text-align: center; /* Garante que o texto dentro do h1 seja centralizado */
+}
+
+.main-header h1 {
+  font-size: 2em;
+  color: var(--heading-color);
+  font-weight: 700;
+  margin: 0;
+  flex-grow: 1; /* Permite que o h1 ocupe o espaço e centralize o texto */
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Espaço entre os cards de conteúdo */
+  width: 100%; /* Garante que a seção ocupe a largura total disponível */
+  max-width: 1200px; /* Limite a largura máxima para o conteúdo principal */
+  align-items: center; /* Centraliza os cards dentro da seção */
+}
+
+.content-card {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  padding: 25px; /* Mais padding para os cards */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%; /* Ocupa a largura total do content-section */
+  max-width: 800px; /* Limite a largura máxima de um card individual */
+  box-sizing: border-box; /* Inclui padding na largura do card */
+  text-align: center; /* Centraliza o texto dentro do card */
+}
+
+.content-card h2 {
+  font-size: 1.5em;
+  color: var(--heading-color);
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* Estilos básicos para links em geral no conteúdo */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+a:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+  .sidebar {
+      width: 0; /* Esconde a sidebar em telas pequenas */
+      box-shadow: none;
+  }
+
+  .sidebar:hover {
+      width: 180px; /* Largura menor para sidebar expandida em mobile */
+  }
+
+  .sidebar:not(:hover) .sidebar-header .system-name,
+  .sidebar:not(:hover) .menu-button .label,
+  .sidebar:not(:hover) .menu-category {
+      display: none;
+  }
+
+  .main-content {
+      margin-left: 0; /* Conteúdo ocupa toda a largura */
+      padding: 20px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centraliza horizontalmente */
+    justify-content: center; /* opcional: centraliza verticalmente se usar altura total */
+    min-height: 100vh;
+    padding: 30px;
+    margin-left: 60px; /* respeita o espaço da sidebar recolhida */
+    transition: margin-left var(--transition-speed) ease;
+    box-sizing: border-box;
+  }
+  
+  .sidebar:hover + .content {
+    margin-left: 260px; /* quando sidebar expandir */
+  }
+
+  .sidebar:hover + .main-content {
+      margin-left: 0; /* Permanece sem margem lateral */
+  }
+
+  .main-header h1 {
+      font-size: 1.5em; /* Reduz o tamanho do título em telas menores */
+  }
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Orçamento Trimestral</title>
+  <link rel="stylesheet" href="../css/admincss/criar.css" />
+</head>
+<body>
+  <div class="content">
+    <div class="container">
+      <h1>Cadastro de Orçamento Trimestral</h1>
+      <form id="formCriarOrcamentoTri">
+        <div class="form-group">
+          <label for="txtValor">Valor:</label>
+          <input type="number" id="txtValor" step="0.01" required placeholder="Ex: 25000.00" />
+        </div>
+        <div class="form-group">
+          <label for="txtTrimestre">Trimestre:</label>
+          <input type="number" id="txtTrimestre" min="1" max="4" required placeholder="1 a 4" />
+        </div>
+        <div class="form-group">
+          <label for="txtAnual">ID Orçamento Anual:</label>
+          <input type="number" id="txtAnual" required placeholder="Ex: 4" />
+        </div>
+        <div class="form-group">
+          <label for="txtCategoria">ID Categoria:</label>
+          <input type="number" id="txtCategoria" required placeholder="Ex: 1" />
+        </div>
+        <button type="submit">Criar Orçamento</button>
+      </form>
+      <div id="divResposta"></div>
+    </div>
+  </div>
+  <script src="../javascript/criarOrcamentoTri.js"></script>
+  <script src="../javascript/sessao.js"></script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+/* gerenteFinanceiro.css */
+:root {
+  --sidebar-bg: #1d2b53;
+  --sidebar-hover: #3d5af1;
+  --text-color: #e0e0e0; /* Kept from funcionarioFinanceiro.css */
+  --accent-color: #e94560;
+  --card-bg: #ffffff; /* Kept from funcionarioFinanceiro.css */
+  --border-color: #e0e0e0; /* Kept from funcionarioFinanceiro.css */
+  --filter-bg: #f9f9f9; /* Kept from funcionarioFinanceiro.css */
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8; /* Kept from original and funcionarioFinanceiro.css */
+  color: #333; /* Kept from original and funcionarioFinanceiro.css */
+  display: flex; /* Kept from original and funcionarioFinanceiro.css */
+  min-height: 100vh; /* Kept from original and funcionarioFinanceiro.css */
+}
+
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: white;
+  width: 70px;
+  transition: width 0.3s ease;
+  height: 100vh;
+  position: fixed;
+  z-index: 1000;
+  overflow-x: hidden; /* Kept from original */
+  overflow-y: auto; /* Kept from original */
+}
+
+.sidebar:hover {
+  width: 240px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.logo-icon {
+  width: 30px; /* Kept from original */
+  height: 30px; /* Kept from original */
+  fill: currentColor; /* Kept from original */
+}
+
+.system-name {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap; /* Kept from original */
+  font-weight: bold; /* Kept from original */
+}
+
+.sidebar:hover .system-name {
+  opacity: 1;
+}
+
+.divider { /* Kept from original */
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 8px 12px;
+}
+
+.sidebar-section-header { /* Kept from original and funcionarioFinanceiro.css */
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75em;
+  font-weight: bold;
+  padding: 10px 20px 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Oculta o texto do cabeçalho da seção quando a sidebar está minimizada */ /* Kept from original */
+.sidebar:not(:hover) .sidebar-section-header {
+  display: none;
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  margin: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.menu-button:hover {
+  background-color: var(--sidebar-hover);
+  border-color: var(--accent-color);
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  fill: currentColor; /* Kept from original */
+}
+
+.sidebar .label { /* Kept from original */
+  display: none;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .label { /* Kept from original */
+  display: inline;
+  opacity: 1;
+}
+
+.main-content {
+  margin-left: 80px;
+  padding: 20px;
+  width: calc(100% - 80px); /* Adjusted based on new sidebar width */
+  transition: margin-left 0.3s ease; /* Kept from original */
+  display: flex; /* Kept from original */
+  flex-direction: column; /* Kept from original */
+  align-items: center; /* Kept from original */
+  flex-grow: 1; /* Kept from original */
+}
+
+.sidebar:hover ~ .main-content { /* Kept from original */
+  margin-left: 240px;
+}
+
+.dashboard-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.header-title {
+  color: #333; /* Kept from original */
+  font-size: 2em; /* Kept from original */
+  margin: 0; /* Kept from original */
+  flex-grow: 1; /* Allow title to take available space */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+.btn-logout {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #c0392b;
+}
+
+/* Esconder seções */
+.oculto {
+  display: none !important;
+}
+
+/* Estilos de Botões */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+  margin-left: 5px; /* Adicionado para espaçamento entre botões */
+}
+
+.btn-primary {
+  background-color: #1abc9c;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #16a085;
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
+}
+
+.btn-editar {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #2980b9;
+}
+
+.btn-excluir {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-excluir:hover {
+  background-color: #c0392b;
+}
+
+.btn-criar {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.btn-criar:hover {
+  background-color: #27ae60;
+}
+
+.btn-cancelar {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #c0392b;
+}
+
+/* Estilos de Formulários e Modais */
+.modal {
+  position: fixed;
+  z-index: 1001; /* Acima da sidebar */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="password"],
+.modal-content input[type="number"],
+.modal-content input[type="date"],
+.modal-content select,
+.modal-content textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box; /* Include padding in width */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+}
+
+/* Estilos de Tabelas */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling on small screens */
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  background-color: var(--card-bg);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+  background-color: var(--filter-bg);
+  color: #555;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.data-table .btn {
+  margin-right: 5px; /* Spacing between table action buttons */
+}
+
+/* Popups de Mensagens */
+.popup-resposta {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1002;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.popup-resposta.mostrar {
+  opacity: 1;
+}
+
+.popup-sucesso {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.popup-erro {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Responsividade Básica (Exemplo) */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+  }
+
+  .sidebar:hover {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar:hover ~ .main-content {
+    margin-left: 200px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+
+/* Estilos Adicionais para o Calendário */
+#calendar {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 10px;
+}
+
+/* Estilos para cards de KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.kpi-card {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.kpi-card h4 {
+  color: #555;
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+.kpi-card p {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin: 10px 0 0;
+}
+
+/* Estilos para gráficos */
+.chart-container {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  width: 100%;
+  max-width: 900px;
+}

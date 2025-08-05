@@ -1,0 +1,2098 @@
+{
+  "type": "collection.insomnia.rest/5.0",
+  "name": "Rotas TCC",
+  "meta": {
+    "id": "wrk_b16f35ad50b74c67bb9b3636356f6174",
+    "created": 1746151017264,
+    "modified": 1746151017264
+  },
+  "collection": [
+    {
+      "name": "Usuário",
+      "meta": {
+        "id": "fld_4cdd3a99d39045f6800f07873db68e79",
+        "created": 1746151167977,
+        "modified": 1746151206224,
+        "sortKey": -1746151168079
+      },
+      "children": [
+        {
+          "name": "usuarios",
+          "meta": {
+            "id": "fld_4117aa3d75044959b8693f933c22686e",
+            "created": 1746151167980,
+            "modified": 1746151167980,
+            "sortKey": -1746151167980
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/usuarios/2",
+              "name": "GET /usuarios/:id",
+              "meta": {
+                "id": "req_7a9085efd76a4396935970a728977a60",
+                "created": 1746151167981,
+                "modified": 1746323751911,
+                "isPrivate": false,
+                "sortKey": -1746151168084
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios",
+              "name": "GET /usuarios",
+              "meta": {
+                "id": "req_b6f5109a9efb421481685e3bc6731e8e",
+                "created": 1746151167981,
+                "modified": 1747694807718,
+                "isPrivate": false,
+                "sortKey": -1746151168034
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios",
+              "name": "POST /usuarios",
+              "meta": {
+                "id": "req_c96c6c12f46b4c77b006d90f563dc970",
+                "created": 1746151167982,
+                "modified": 1746326782033,
+                "isPrivate": false,
+                "sortKey": -1746151168184
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nomeUsuario\": \"Maria Oliveira\",\n  \"emailUsuario\": \"maria.oliveira@example.com\",\n  \"senhaUsuario\": \"senhaForte456\",\n  \"dataCadastro\": \"2025-05-02\",\n  \"idCargo\": 1\n}\n"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios/2",
+              "name": "PUT /usuarios/:id",
+              "meta": {
+                "id": "req_11a515707d1144e4bc7d37a86a89c709",
+                "created": 1746151167983,
+                "modified": 1746323778251,
+                "isPrivate": false,
+                "sortKey": -1746151168009
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nomeUsuario\": \"Emerson Oliveira\",\n  \"emailUsuario\": \"Emerson.oliveira@example.com\",\n  \"senhaUsuario\": \"senhaForte456\",\n  \"dataCadastro\": \"2025-05-02\",\n  \"idCargo\": 2\n}\n"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios/2",
+              "name": "DELETE /usuarios/:id",
+              "meta": {
+                "id": "req_604b8d1afec04bcbbcaaa56bf2527b32",
+                "created": 1746151167984,
+                "modified": 1746323802675,
+                "isPrivate": false,
+                "sortKey": -1746151167984
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cargo",
+      "meta": {
+        "id": "fld_0f304574b5db43cb84a48a587ee18f3d",
+        "created": 1746151167978,
+        "modified": 1746151208250,
+        "sortKey": -1746151168029
+      },
+      "children": [
+        {
+          "name": "cargos",
+          "meta": {
+            "id": "fld_c0b7a98493bb45c9b0116dc180720ed8",
+            "created": 1746151167984,
+            "modified": 1746151167984,
+            "sortKey": -1746151167984
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/cargos",
+              "name": "GET /cargos",
+              "meta": {
+                "id": "req_7e77bd1f793f4c1db78ccda3f97ee714",
+                "created": 1746151167985,
+                "modified": 1746326452488,
+                "isPrivate": false,
+                "sortKey": -1746151168087
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/cargos",
+              "name": "POST /cargos",
+              "meta": {
+                "id": "req_1ea188a6194f450d9a8869d7b7269b2c",
+                "created": 1746151167986,
+                "modified": 1746326521201,
+                "isPrivate": false,
+                "sortKey": -1746151168012
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nomeCargo\": \"Aviãozinho\",\n  \"prioridadeCargo\": 2\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/cargos/2",
+              "name": "GET /cargos/:id",
+              "meta": {
+                "id": "req_aacd6495475f42fdbe35bd2a0c64fd30",
+                "created": 1746151167986,
+                "modified": 1746326813972,
+                "isPrivate": false,
+                "sortKey": -1746151168037
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/cargos/2",
+              "name": "PUT /cargos/:id",
+              "meta": {
+                "id": "req_774af68e69ef4dcb93415a89bb05f1b3",
+                "created": 1746151167987,
+                "modified": 1746326499917,
+                "isPrivate": false,
+                "sortKey": -1746151167987
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nomeCargo\": \"Aviãozinho\",\n  \"prioridadeCargo\": 2\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/cargos/1",
+              "name": "DELETE /cargos/:id",
+              "meta": {
+                "id": "req_eb71aecf2e7c44b7a5e5303ea283faf7",
+                "created": 1746151167987,
+                "modified": 1746326803669,
+                "isPrivate": false,
+                "sortKey": -1746151167887
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tarefa",
+      "meta": {
+        "id": "fld_6307b89ffe55406bb0ec8b20579ff470",
+        "created": 1746151167979,
+        "modified": 1746151209779,
+        "sortKey": -1746151168004
+      },
+      "children": [
+        {
+          "name": "tarefas",
+          "meta": {
+            "id": "fld_c0b4de29288b44a4a9f74c3f840ed4a9",
+            "created": 1746151167988,
+            "modified": 1746151167988,
+            "sortKey": -1746151167988
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/tarefas",
+              "name": "GET /tarefas",
+              "meta": {
+                "id": "req_16065deeb816436cbb2e8461af4a2039",
+                "created": 1746151167988,
+                "modified": 1746556403816,
+                "isPrivate": false,
+                "sortKey": -1746151168029.5
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/tarefas/1",
+              "name": "GET /tarefas/:id",
+              "meta": {
+                "id": "req_97ca2763e14f4311bb70d3c1454ccf31",
+                "created": 1746151167990,
+                "modified": 1746556401590,
+                "isPrivate": false,
+                "sortKey": -1746151168042
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/tarefas",
+              "name": "POST /tarefas",
+              "meta": {
+                "id": "req_5460a50a289c434fae8a17e1f2a69f23",
+                "created": 1746151167991,
+                "modified": 1746556440101,
+                "isPrivate": false,
+                "sortKey": -1746151168017
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"tituloTarefa\": \"Corrigir bugs na tela de login\",\n  \"descricaoTarefa\": \"Identificar e resolver os erros que impedem o\",\n  \"statusTarefa\": \"pendente\",\n  \"dataInicio\": \"2025-05-06\",\n  \"dataFim\": \"2025-05-15\",\n  \"valorOpc\": 150.00\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/tarefas/2",
+              "name": "PUT /tarefas/:id",
+              "meta": {
+                "id": "req_a89beb94a5234b779a61877896a7616c",
+                "created": 1746151167991,
+                "modified": 1746556848340,
+                "isPrivate": false,
+                "sortKey": -1746151167991
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"tituloTarefa\": \"Corrigir nada na tela de login\",\n  \"descricaoTarefa\": \"Identificar e resolver os erros que impedem o\",\n  \"statusTarefa\": \"pendente\",\n  \"dataInicio\": \"2025-05-06\",\n  \"dataFim\": \"2025-05-15\",\n  \"valorOpc\": 150.00\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/tarefas/2",
+              "name": "DELETE /tarefas/:id",
+              "meta": {
+                "id": "req_9ad5d4b276fc41d183257138a8612cdc",
+                "created": 1746151167992,
+                "modified": 1746556858576,
+                "isPrivate": false,
+                "sortKey": -1746151167891
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "usuarios-tarefas",
+          "meta": {
+            "id": "fld_27f1018f19d6496f98707ca767b3c924",
+            "created": 1746151167992,
+            "modified": 1746151167992,
+            "sortKey": -1746151167992
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/usuarios-tarefas/1",
+              "name": "GET /usuarios-tarefas/:id",
+              "meta": {
+                "id": "req_5880aa11772d4b51a5ec83f74179cbe8",
+                "created": 1746151167993,
+                "modified": 1746557744467,
+                "isPrivate": false,
+                "sortKey": -1746151168095
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios-tarefas",
+              "name": "GET /usuarios-tarefas",
+              "meta": {
+                "id": "req_cc87f29795224f1d9d238960a58df386",
+                "created": 1746151167993,
+                "modified": 1746557748823,
+                "isPrivate": false,
+                "sortKey": -1746151168045
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios-tarefas",
+              "name": "POST /usuarios-tarefas",
+              "meta": {
+                "id": "req_dbc3f1280a80402bb9c735cf118b799a",
+                "created": 1746151167994,
+                "modified": 1747694711632,
+                "isPrivate": false,
+                "sortKey": -1746151168020
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios-tarefas/1",
+              "name": "PUT /usuarios-tarefas/:id",
+              "meta": {
+                "id": "req_8873eda313d34c7b9703fb59ddf16413",
+                "created": 1746151167995,
+                "modified": 1746151167995,
+                "isPrivate": false,
+                "sortKey": -1746151167995
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/usuarios-tarefas/1",
+              "name": "DELETE /usuarios-tarefas/:id",
+              "meta": {
+                "id": "req_b9f13fefa94c46d6b92f98dda7683bb3",
+                "created": 1746151167995,
+                "modified": 1746557751890,
+                "isPrivate": false,
+                "sortKey": -1746151167895
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financeiro",
+      "meta": {
+        "id": "fld_c6052f378463473993d4918dc8df8e7b",
+        "created": 1746151167979,
+        "modified": 1746151167979,
+        "sortKey": -1746151167979
+      },
+      "children": [
+        {
+          "name": "contas",
+          "meta": {
+            "id": "fld_35d1f23a320e4e87b8bce6f6cfddb291",
+            "created": 1746151167996,
+            "modified": 1746151167996,
+            "sortKey": -1746151167996
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/contas",
+              "name": "GET /contas",
+              "meta": {
+                "id": "req_38d689f87c264cc489cfee8a08a7edb0",
+                "created": 1746151167996,
+                "modified": 1746151167996,
+                "isPrivate": false,
+                "sortKey": -1746151167996
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/contas/1",
+              "name": "GET /contas/:id",
+              "meta": {
+                "id": "req_1c173f2f90b04108aa6d9a326df549b8",
+                "created": 1746151167997,
+                "modified": 1746151167997,
+                "isPrivate": false,
+                "sortKey": -1746151167997
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/contas",
+              "name": "POST /contas",
+              "meta": {
+                "id": "req_0ed9bea1115d4e5d896308963eab19bd",
+                "created": 1746151167998,
+                "modified": 1746151167998,
+                "isPrivate": false,
+                "sortKey": -1746151167998
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/contas/1",
+              "name": "DELETE /contas/:id",
+              "meta": {
+                "id": "req_a71139736c624ac299f8e5f846a95e82",
+                "created": 1746151167999,
+                "modified": 1746151167999,
+                "isPrivate": false,
+                "sortKey": -1746151167999
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/contas/1",
+              "name": "PUT /contas/:id",
+              "meta": {
+                "id": "req_fffc704a9ea040d7a470105446f3f3ba",
+                "created": 1746151167999,
+                "modified": 1746151167999,
+                "isPrivate": false,
+                "sortKey": -1746151167999
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "lancamentos",
+          "meta": {
+            "id": "fld_f6b2ff3b62d049f09bcebc9f2934f685",
+            "created": 1746151168000,
+            "modified": 1746151168000,
+            "sortKey": -1746151168000
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/lancamentos/1",
+              "name": "GET /lancamentos/:id",
+              "meta": {
+                "id": "req_18604c1fe8ef4555adbb4ab4cddf0709",
+                "created": 1746151168001,
+                "modified": 1746151168001,
+                "isPrivate": false,
+                "sortKey": -1746151168001
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/lancamentos",
+              "name": "GET /lancamentos",
+              "meta": {
+                "id": "req_ec1f45ef58de474dbfa30350982dc718",
+                "created": 1746151168001,
+                "modified": 1746151168001,
+                "isPrivate": false,
+                "sortKey": -1746151168001
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/lancamentos",
+              "name": "POST /lancamentos",
+              "meta": {
+                "id": "req_ccd4731e2b6244d9b4f743d90477a24d",
+                "created": 1746151168002,
+                "modified": 1746151168002,
+                "isPrivate": false,
+                "sortKey": -1746151168002
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/lancamentos/1",
+              "name": "PUT /lancamentos/:id",
+              "meta": {
+                "id": "req_ee589583c56a43569381451663c1b7e0",
+                "created": 1746151168002,
+                "modified": 1746151168002,
+                "isPrivate": false,
+                "sortKey": -1746151168002
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/lancamentos/1",
+              "name": "DELETE /lancamentos/:id",
+              "meta": {
+                "id": "req_5637a9576d2840e085f2535ecaa53667",
+                "created": 1746151168003,
+                "modified": 1746151168003,
+                "isPrivate": false,
+                "sortKey": -1746151168003
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "metas",
+          "meta": {
+            "id": "fld_03b941d3d8764fd88c70212c32349c88",
+            "created": 1746151168004,
+            "modified": 1746151168004,
+            "sortKey": -1746151168004
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/metas",
+              "name": "GET /metas",
+              "meta": {
+                "id": "req_67864a61cb5343cda6821769e2e31642",
+                "created": 1746151168005,
+                "modified": 1746151168005,
+                "isPrivate": false,
+                "sortKey": -1746151168005
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/metas/1",
+              "name": "GET /metas/:id",
+              "meta": {
+                "id": "req_79179ebd9d33455d9b6b9e37cc1c4a72",
+                "created": 1746151168005,
+                "modified": 1746151168005,
+                "isPrivate": false,
+                "sortKey": -1746151168005
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/metas",
+              "name": "POST /metas",
+              "meta": {
+                "id": "req_102672cb50194ca19a357bdedaa09d34",
+                "created": 1746151168006,
+                "modified": 1746151168006,
+                "isPrivate": false,
+                "sortKey": -1746151168006
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/metas/1",
+              "name": "PUT /metas/:id",
+              "meta": {
+                "id": "req_9910d38f2ac149f1ae42b4c0fdc2f025",
+                "created": 1746151168006,
+                "modified": 1746151168006,
+                "isPrivate": false,
+                "sortKey": -1746151168006
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/metas/1",
+              "name": "DELETE /metas/:id",
+              "meta": {
+                "id": "req_05a59790cc584f518ca0e9245f22ddd4",
+                "created": 1746151168007,
+                "modified": 1746151168007,
+                "isPrivate": false,
+                "sortKey": -1746151168007
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "produtos",
+          "meta": {
+            "id": "fld_5d8314fd70a9453fb91fddbc74c332aa",
+            "created": 1746151168007,
+            "modified": 1746151168007,
+            "sortKey": -1746151168007
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/produtos",
+              "name": "GET /produtos",
+              "meta": {
+                "id": "req_ad2bbb76b3a34d018413aa53a50b5470",
+                "created": 1746151168008,
+                "modified": 1746151168008,
+                "isPrivate": false,
+                "sortKey": -1746151168008
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/produtos",
+              "name": "POST /produtos",
+              "meta": {
+                "id": "req_09800735fa8a41ce81f91840ea314278",
+                "created": 1746151168009,
+                "modified": 1746151168009,
+                "isPrivate": false,
+                "sortKey": -1746151168009
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/produtos/1",
+              "name": "GET /produtos/:id",
+              "meta": {
+                "id": "req_60c3f73ad7ed4ed48276bdf070df2aa5",
+                "created": 1746151168009,
+                "modified": 1746151168009,
+                "isPrivate": false,
+                "sortKey": -1746151168009
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/produtos/1",
+              "name": "PUT /produtos/:id",
+              "meta": {
+                "id": "req_0d5f358201cc466fb6b4fa6e8f951d96",
+                "created": 1746151168010,
+                "modified": 1746151168010,
+                "isPrivate": false,
+                "sortKey": -1746151168010
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/produtos/1",
+              "name": "DELETE /produtos/:id",
+              "meta": {
+                "id": "req_dd6d9d04cd4046ff8d4bb9e972bbfa67",
+                "created": 1746151168011,
+                "modified": 1746151168011,
+                "isPrivate": false,
+                "sortKey": -1746151168011
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "extratos",
+          "meta": {
+            "id": "fld_5fa2d90da4304bd7b359feb740eda075",
+            "created": 1746151168011,
+            "modified": 1746151168011,
+            "sortKey": -1746151168011
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/extratos",
+              "name": "GET /extratos",
+              "meta": {
+                "id": "req_1d7d9c44085d44fb8006f37708976b4e",
+                "created": 1746151168012,
+                "modified": 1746151168012,
+                "isPrivate": false,
+                "sortKey": -1746151168012
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/extratos/1",
+              "name": "GET /extratos/:id",
+              "meta": {
+                "id": "req_7e932950d12142cba200b167b0e81b83",
+                "created": 1746151168012,
+                "modified": 1746151168012,
+                "isPrivate": false,
+                "sortKey": -1746151168012
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/extratos",
+              "name": "POST /extratos",
+              "meta": {
+                "id": "req_0d8e994ae5384eacbb25db69a5399f87",
+                "created": 1746151168013,
+                "modified": 1746151168013,
+                "isPrivate": false,
+                "sortKey": -1746151168013
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/extratos/1",
+              "name": "PUT /extratos/:id",
+              "meta": {
+                "id": "req_a79cb167b5764794b220de82a12b0579",
+                "created": 1746151168013,
+                "modified": 1746151168013,
+                "isPrivate": false,
+                "sortKey": -1746151168013
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/extratos/1",
+              "name": "DELETE /extratos/:id",
+              "meta": {
+                "id": "req_a516070d21824e0fbfb0202c01d29f61",
+                "created": 1746151168014,
+                "modified": 1746151168014,
+                "isPrivate": false,
+                "sortKey": -1746151168014
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "rentabilidades",
+          "meta": {
+            "id": "fld_777ac18aa11c4bc5ab601cd684554334",
+            "created": 1746151168015,
+            "modified": 1746151168015,
+            "sortKey": -1746151168015
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/rentabilidades",
+              "name": "GET /rentabilidades",
+              "meta": {
+                "id": "req_4b4de26d655c4c76af53086f59539f8b",
+                "created": 1746151168015,
+                "modified": 1746151168015,
+                "isPrivate": false,
+                "sortKey": -1746151168015
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/rentabilidades/1",
+              "name": "GET /rentabilidades/:id",
+              "meta": {
+                "id": "req_4a6d665fa8964ea6aef49a02abef6126",
+                "created": 1746151168016,
+                "modified": 1746151168016,
+                "isPrivate": false,
+                "sortKey": -1746151168016
+              },
+              "method": "GET",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/rentabilidades",
+              "name": "POST /rentabilidades",
+              "meta": {
+                "id": "req_57b8d1b960eb4d0b91f4f36d58c1a0d8",
+                "created": 1746151168017,
+                "modified": 1746151168017,
+                "isPrivate": false,
+                "sortKey": -1746151168017
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/rentabilidades/1",
+              "name": "PUT /rentabilidades/:id",
+              "meta": {
+                "id": "req_aea62ead6bc04df880f310c1e36f1d21",
+                "created": 1746151168017,
+                "modified": 1746151168017,
+                "isPrivate": false,
+                "sortKey": -1746151168017
+              },
+              "method": "PUT",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/rentabilidades/1",
+              "name": "DELETE /rentabilidades/:id",
+              "meta": {
+                "id": "req_4c511b83ffff4e149425637826a83634",
+                "created": 1746151168018,
+                "modified": 1746151168018,
+                "isPrivate": false,
+                "sortKey": -1746151168018
+              },
+              "method": "DELETE",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "orcamentos anuais",
+          "meta": {
+            "id": "fld_39beaafbeb1f4c7ca198136478108117",
+            "created": 1747696253566,
+            "modified": 1747697804564,
+            "sortKey": -1747696253566
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/orcamentosanuais",
+              "name": "GET /orcamentosanuais",
+              "meta": {
+                "id": "req_bc36d5e3baa246b99e98b6534a6e19e7",
+                "created": 1747696269881,
+                "modified": 1747696326281,
+                "isPrivate": false,
+                "sortKey": -1747696269881
+              },
+              "method": "GET",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentosanuais",
+              "name": "POST /orcamentosanuais",
+              "meta": {
+                "id": "req_ed672d63a7ff49e88bd0af89509a3b90",
+                "created": 1747696337992,
+                "modified": 1747697782325,
+                "isPrivate": false,
+                "sortKey": -1746923719032.5
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n   \"valorOrcamentoAnual\": 500.00,\n   \"anoOrcamentoAnual\": 2023,\n   \"idCategoria\": 1\n}\n"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentosanuais/1",
+              "name": "GET /orcamentosanuais/:id",
+              "meta": {
+                "id": "req_74fd62fd2d2e4b63af1d616de8ef2a9f",
+                "created": 1747696358568,
+                "modified": 1747696402908,
+                "isPrivate": false,
+                "sortKey": -1747309994456.75
+              },
+              "method": "GET",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentosanuais/1",
+              "name": "PUT /orcamentosanuais/:id",
+              "meta": {
+                "id": "req_f866df4491cd412d8095f0938cdfb075",
+                "created": 1747696373151,
+                "modified": 1747696394018,
+                "isPrivate": false,
+                "sortKey": -1746923718932.5
+              },
+              "method": "PUT",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentosanuais/1",
+              "name": "DELETE /orcamentosanuais/:id",
+              "meta": {
+                "id": "req_003c1d78a2b84a7ba0d340abe147b2bc",
+                "created": 1747696385957,
+                "modified": 1747696400190,
+                "isPrivate": false,
+                "sortKey": -1746537443558.25
+              },
+              "method": "DELETE",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "orcamentos trimestrais",
+          "meta": {
+            "id": "fld_6f08cf146ae7420c93590f21e5858a95",
+            "created": 1747697839441,
+            "modified": 1747697839441,
+            "sortKey": -1746923710822.5
+          },
+          "children": [
+            {
+              "url": "http://localhost:3000/orcamentostri",
+              "name": "GET /orcamentostri",
+              "meta": {
+                "id": "req_e999a6bb62f24971a33a0ff4ffef641b",
+                "created": 1747697839442,
+                "modified": 1747698879818,
+                "isPrivate": false,
+                "sortKey": -1747696269881
+              },
+              "method": "GET",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentostri",
+              "name": "POST /orcamentostri",
+              "meta": {
+                "id": "req_bde2594240d842f2bd7747e9189f5491",
+                "created": 1747697839443,
+                "modified": 1747698963556,
+                "isPrivate": false,
+                "sortKey": -1746923719032.5
+              },
+              "method": "POST",
+              "body": {
+                "mimeType": "application/json",
+                "text": "{\n    \"valorOrcamentoTri\": 25000.00,\n    \"trimestreOrcamentoTri\": 1,\n    \"idOrcamentoAnual\": 1,\n    \"idCategoria\": 1\n}"
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentostri/1",
+              "name": "PUT /orcamentostri/:id",
+              "meta": {
+                "id": "req_48f05cb623cf4d85b0b72049c976d048",
+                "created": 1747697839444,
+                "modified": 1747698913119,
+                "isPrivate": false,
+                "sortKey": -1746923718932.5
+              },
+              "method": "PUT",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentostri/1",
+              "name": "GET /orcamentostri/:id",
+              "meta": {
+                "id": "req_fdcc765ee4694961ad96d50f65253312",
+                "created": 1747697839444,
+                "modified": 1747698894399,
+                "isPrivate": false,
+                "sortKey": -1747309994456.75
+              },
+              "method": "GET",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            },
+            {
+              "url": "http://localhost:3000/orcamentostri/1",
+              "name": "DELETE /orcamentostri/:id",
+              "meta": {
+                "id": "req_a1ba317ae99a454890774516126c153c",
+                "created": 1747697839445,
+                "modified": 1747698925823,
+                "isPrivate": false,
+                "sortKey": -1746537443558.25
+              },
+              "method": "DELETE",
+              "headers": [
+                {
+                  "name": "User-Agent",
+                  "value": "insomnia/11.0.2"
+                }
+              ],
+              "settings": {
+                "renderRequestBody": true,
+                "encodeUrl": true,
+                "followRedirects": "global",
+                "cookies": {
+                  "send": true,
+                  "store": true
+                },
+                "rebuildPath": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cookieJar": {
+    "name": "Default Jar",
+    "meta": {
+      "id": "jar_26ccdb8819b21a265a013b5e03b11bc8ac786a61",
+      "created": 1746151017266,
+      "modified": 1746151017266
+    }
+  },
+  "environments": {
+    "name": "Base Environment",
+    "meta": {
+      "id": "env_26ccdb8819b21a265a013b5e03b11bc8ac786a61",
+      "created": 1746151017266,
+      "modified": 1746151017266,
+      "isPrivate": false
+    }
+  }
+}

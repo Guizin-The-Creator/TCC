@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Excluir Cargos</title>
+    <link rel="stylesheet" href="../../css/admincss/admin.css" />
+    <link rel="stylesheet" href="../../css/admincss/excluirCargo.css" />
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Conteúdo principal -->
+    <div class="content">
+        <div class="container">
+            <h1>Cargos Cadastrados</h1>
+
+            <!-- Tabela onde os cargos serão listados -->
+            <table id="tabelaCargos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome do Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas geradas via JS -->
+                </tbody>
+            </table>
+
+            <!-- Div para exibir mensagens de resposta -->
+            <div id="divResposta"></div>
+        </div>
+    </div>
+
+    <script>
+        fetch('../sidebar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+      
+            const btnLogout = document.getElementById('logout-button');
+            if (btnLogout) {
+              btnLogout.addEventListener('click', e => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.href = '/html/login.html';
+              });
+            }
+          });
+      </script>
+
+    <script src="../../javascript/adminFunctions/excluirCargo.js"></script>
+    <script src="../../javascript/sessao.js"></script>
+</body>
+</html>

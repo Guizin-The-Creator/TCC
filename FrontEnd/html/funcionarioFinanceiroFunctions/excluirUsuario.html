@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Excluir Usuários</title>
+    <link rel="stylesheet" href="../../css/admincss/admin.css">
+    <link rel="stylesheet" href="../../css/admincss/excluirUsuario.css">
+</head>
+<body>
+
+    <div id="sidebar-container"></div>
+
+    <div class="content">
+        <div class="container">
+            <h1>Usuários Cadastrados</h1>
+
+            <table id="tabelaUsuarios">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Data de Cadastro</th>
+                        <th>ID Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+
+            <div id="divResposta"></div>
+        </div>
+    </div>
+
+    <script>
+        fetch('../sidebar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+      
+            const btnLogout = document.getElementById('logout-button');
+            if (btnLogout) {
+              btnLogout.addEventListener('click', e => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.href = '/html/login.html';
+              });
+            }
+          });
+      </script>
+
+    <script src="../../javascript/adminFunctions/excluirUsuario.js"></script>
+    <script src="../../javascript/sessao.js"></script>
+</body>
+</html>

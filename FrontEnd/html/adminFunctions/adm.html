@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard de Administrador</title>
+    <link rel="stylesheet" href="../../css/admincss/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Bem-vindo(a) ao Dashboard do Administrador</h1>
+            </header>
+
+            <section class="content-section">
+                <div class="content-card welcome-card">
+                    <h2>Visão Geral</h2>
+                    <p>Utilize o menu lateral para navegar entre as funcionalidades de gerenciamento de usuários e
+                        cargos.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../../javascript/sessao.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('../sidebar.html')
+                .then(response => {
+                    if (!response.ok) throw new Error("Erro ao carregar sidebar");
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+
+                    const currentPath = window.location.pathname.split('/').pop();
+                    const menuButtons = document.querySelectorAll('.menu-button');
+                    menuButtons.forEach(button => {
+                        const href = button.getAttribute('href')?.split('/').pop();
+                        if (currentPath === 'adm.html' && href?.includes('criarUsuario.html')) {
+                            button.classList.add('active');
+                        } else if (href === currentPath) {
+                            button.classList.add('active');
+                        }
+                    });
+
+                    const btnLogout = document.getElementById('logout-button');
+                    if (btnLogout) {
+                        btnLogout.addEventListener('click', e => {
+                            e.preventDefault();
+                            localStorage.removeItem('token');
+                            location.reload();
+                            // ou window.location.href = 'login.html';
+                        });
+                    }
+                })
+                .catch(error => console.error("Erro ao carregar sidebar:", error));
+        });
+
+    </script>
+
+</body>
+
+</html>
