@@ -28,6 +28,68 @@ module.exports = class UsuarioTarefaController {
         });
     };
 
+    // Buscar todas as associações de uma tarefa específica
+    UsuarioTarefa_readByTarefa_controller = async (req, res) => {
+        const { idTarefa } = req.params;
+        const jwt = new MeuTokenJWT();
+        const token = jwt.gerarToken(req.user);
+
+        try {
+            const associacoes = await UsuarioTarefa.readByTarefa(idTarefa);
+            return res.status(200).send({
+                status: true,
+                message: 'Associações da tarefa encontradas com sucesso',
+                associacoes,
+                token
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send({
+                status: false,
+                message: 'Erro ao buscar associações da tarefa',
+                token
+            });
+        }
+    };
+
+    // Atualizar todas as associações de uma tarefa (aplica o mesmo status a todos)
+    UsuarioTarefa_updateByTarefa_controller = async (req, res) => {
+        const { idTarefa } = req.params;
+        const { status } = req.body;
+        const jwt = new MeuTokenJWT();
+        const token = jwt.gerarToken(req.user);
+
+        if (!status) {
+            return res.status(400).send({ status: false, message: 'status é obrigatório', token });
+        }
+
+        try {
+            // opcional: checagem extra aqui se precisar (mas idealmente use middleware)
+            const sucesso = await UsuarioTarefa.updateByTarefa(idTarefa, status);
+            if (sucesso) {
+                return res.status(200).send({
+                    status: true,
+                    message: 'Status atualizado para todas as associações da tarefa.',
+                    token
+                });
+            } else {
+                return res.status(404).send({
+                    status: false,
+                    message: 'Nenhuma associação encontrada/atualizada.',
+                    token
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send({
+                status: false,
+                message: 'Erro ao atualizar associações da tarefa',
+                token
+            });
+        }
+    };
+
+
     UsuarioTarefa_readAll_controller = async (req, res) => {
         const associacoes = await UsuarioTarefa.readAll();
         const jwt = new MeuTokenJWT();

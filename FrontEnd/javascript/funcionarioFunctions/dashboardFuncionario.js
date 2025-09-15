@@ -1,9 +1,4 @@
-const tbodyTarefas = document.getElementById("tbodyTarefas");
-const postit = document.getElementById("postit");
-const formEditar = document.getElementById("formEditarRelacao");
-const idTarefaSelecionada = document.getElementById("idTarefaSelecionada");
-const txtStatusEditar = document.getElementById("txtStatusEditar");
-
+// Função para decodificar o token JWT e obter o ID do usuário
 function pegarUserIdDoToken() {
   const token = localStorage.getItem("token");
   if (!token) return null;
@@ -18,34 +13,44 @@ function pegarUserIdDoToken() {
   }
 }
 
+// Elementos DOM
+const tbodyTarefas = document.getElementById("tbodyTarefas");
+const postit = document.getElementById("postit");
+const formEditar = document.getElementById("formEditarRelacao");
+const idTarefaSelecionada = document.getElementById("idTarefaSelecionada");
+const txtStatusEditar = document.getElementById("txtStatusEditar");
+const divResposta = document.getElementById("divResposta");
+
+// Variáveis globais
 const userId = pegarUserIdDoToken();
+const baseUrl = 'http://localhost:3000';
 let dataCadastroAtual = null;
 let idCargoAtual = null;
 let calendarioInstancia = null;
 
+// Inicialização quando o DOM estiver carregado
 window.addEventListener("DOMContentLoaded", () => {
   carregarTarefas();
   carregarPostit();
   carregarPerfil();
   document.getElementById("formPerfil").addEventListener("submit", atualizarPerfil);
 
-  // Adiciona os modais ao body ao carregar a página
-  document.body.appendChild(modalConfirmacao);
-  document.body.appendChild(modalRecado);
-  document.body.appendChild(modalConclusao); // Adiciona o modal de conclusão
+  // Adiciona os modais ao body
+  document.body.appendChild(criarModalConfirmacao());
+  document.body.appendChild(criarModalRecado());
+  document.body.appendChild(criarModalConclusao());
+  document.body.appendChild(criarModalDetalhesTarefa());
 });
 
+// Event listeners
 formEditar.addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = idTarefaSelecionada.value;
   const status = txtStatusEditar.value;
 
-  // Lógica para o popup de confirmação de conclusão
   if (status === "Concluída") {
-    // Busca o título da tarefa diretamente do servidor
     const tarefa = await buscarTarefa(id);
     const tituloTarefa = tarefa.tituloTarefa;
-
     mostrarModalConclusao(tituloTarefa, async () => {
       await updateTaskStatus(id, status);
     });
@@ -54,18 +59,22 @@ formEditar.addEventListener("submit", async (e) => {
   }
 });
 
+// Funções principais
 async function updateTaskStatus(id, status) {
-  await fetch(`http://localhost:3000/usuariostarefas/${userId}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify({ idUsuario: userId, idTarefa: id, status }),
-  });
-  carregarTarefas();
-  document.getElementById("formEditarContainer").classList.add("oculto");
+  try {
+    await fetchWithAuth(`${baseUrl}/usuariostarefas/tarefa/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ status }),
+    });
+    mostrarRespostaPopup("Status atualizado para todos os usuários desta tarefa.", true);
+    await carregarTarefas();
+    document.getElementById("formEditarContainer").classList.add("oculto");
+  } catch (err) {
+    console.error(err);
+    mostrarRespostaPopup("Erro ao atualizar status.", false);
+  }
 }
+
 
 function mostrarPainel(secao) {
   document.getElementById("painel-tarefas").classList.toggle("oculto", secao !== "tarefas");
@@ -73,60 +82,45 @@ function mostrarPainel(secao) {
   document.getElementById("painel-calendario").classList.toggle("oculto", secao !== "calendario");
   document.getElementById("painel-visao-geral").classList.toggle("oculto", secao !== "visao-geral");
   if (secao === "calendario") inicializarCalendario();
-  if (secao === "visao-geral") {
-    carregarTarefas();
-  }
+  if (secao === "visao-geral") carregarTarefas();
 }
 
 async function carregarTarefas() {
-  const res = await fetch(`http://localhost:3000/usuariostarefas/${userId}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-  const data = await res.json();
-  const tarefas = data.associacoes || [];
+  try {
+    const data = await fetchWithAuth(`${baseUrl}/usuariostarefas/${userId}`);
+    const tarefas = data.associacoes || [];
 
-  tbodyTarefas.innerHTML = "";
-  let contadores = { Pendente: 0, "Em andamento": 0, "Concluída": 0 };
+    tbodyTarefas.innerHTML = "";
+    let contadores = { Pendente: 0, "Em andamento": 0, "Concluída": 0 };
 
-  for (const rel of tarefas) {
-    const tarefa = await buscarTarefa(rel.tarefas_idTarefa);
-    const statusFormatado = formatarStatus(rel.status);
-    contadores[statusFormatado]++;
+    for (const rel of tarefas) {
+      const tarefa = await buscarTarefa(rel.tarefas_idTarefa);
+      const statusFormatado = formatarStatus(rel.status);
+      contadores[statusFormatado]++;
 
-    // Mapeia a prioridade para uma cor
-    let corPrioridade = "";
-    switch ((tarefa.prioridadeTarefa || "").toLowerCase()) {
-      case "alta":
-        corPrioridade = "vermelha";
-        break;
-      case "media":
-      case "média":
-        corPrioridade = "amarela";
-        break;
-      case "baixa":
-        corPrioridade = "verde";
-        break;
-      default:
-        corPrioridade = "cinza"; // caso não tenha prioridade definida
+      const corPrioridade = obterCorPrioridade(tarefa.prioridadeTarefa);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${tarefa.tituloTarefa}</td>
+        <td class="status-${statusFormatado.toLowerCase().replace(" ", "")}">${statusFormatado}</td>
+        <td><input type="text" class="data" value="${formatarData(tarefa.dataInicio)}" disabled></td>
+        <td><input type="text" class="data" value="${formatarData(tarefa.dataFim)}" disabled></td>
+        <td><span class="bandeirinha ${corPrioridade}" title="Prioridade: ${tarefa.prioridadeTarefa || 'N/A'}"></span></td>
+        <td>
+          <button onclick="editarStatus(${rel.tarefas_idTarefa}, '${statusFormatado}')">Editar</button>
+          <button onclick="fixarPostit('${tarefa.tituloTarefa}')" class="btn-secondary">Fixar</button>
+        </td>
+      `;
+      tbodyTarefas.appendChild(tr);
     }
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${tarefa.tituloTarefa}</td>
-      <td class="status-${statusFormatado.toLowerCase().replace(" ", "")}">${statusFormatado}</td>
-      <td><input type="text" class="data" value="${formatarData(tarefa.dataInicio)}" disabled></td>
-      <td><input type="text" class="data" value="${formatarData(tarefa.dataFim)}" disabled></td>
-      <td><span class="bandeirinha ${corPrioridade}" title="Prioridade: ${tarefa.prioridadeTarefa || 'N/A'}"></span></td>
-      <td>
-        <button onclick="editarStatus(${rel.tarefas_idTarefa}, '${statusFormatado}')">Editar</button>
-        <button onclick="fixarPostit('${tarefa.tituloTarefa}')">Fixar</button>
-      </td>
-    `;
-    tbodyTarefas.appendChild(tr);
+    gerarGrafico(contadores);
+    flatpickr(".data", { enableTime: true, dateFormat: "d/m/Y H:i" });
+  } catch (err) {
+    console.error('Erro ao carregar tarefas:', err);
+    mostrarRespostaPopup('Erro ao carregar tarefas. Veja console.', false);
   }
-
-  gerarGrafico(contadores);
-  flatpickr(".data", { enableTime: true, dateFormat: "d/m/Y H:i" });
 }
 
 function formatarStatus(status) {
@@ -138,6 +132,17 @@ function formatarStatus(status) {
     default: return status;
   }
 }
+
+function obterCorPrioridade(prioridade) {
+  switch ((prioridade || "").toLowerCase()) {
+    case "alta": return "vermelha";
+    case "media":
+    case "média": return "amarela";
+    case "baixa": return "verde";
+    default: return "cinza";
+  }
+}
+
 function editarStatus(id, status) {
   idTarefaSelecionada.value = id;
   txtStatusEditar.value = status;
@@ -163,14 +168,12 @@ function carregarPostit() {
 }
 
 async function buscarTarefa(id) {
-  const res = await fetch(`http://localhost:3000/tarefas/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-  const data = await res.json();
+  const data = await fetchWithAuth(`${baseUrl}/tarefas/${id}`);
   return data.tarefa || {};
 }
 
 function formatarData(dataISO) {
+  if (!dataISO) return '';
   const d = new Date(dataISO);
   const dia = String(d.getDate()).padStart(2, "0");
   const mes = String(d.getMonth() + 1).padStart(2, "0");
@@ -182,10 +185,8 @@ function formatarData(dataISO) {
 
 function gerarGrafico({ Pendente, "Em andamento": EmAndamento, "Concluída": Concluida }) {
   const ctx = document.getElementById("graficoTarefas").getContext("2d");
-  // Destroy existing chart instance to prevent duplicates
-  if (window.myPieChart) {
-    window.myPieChart.destroy();
-  }
+  if (window.myPieChart) window.myPieChart.destroy();
+
   window.myPieChart = new Chart(ctx, {
     type: "pie",
     data: {
@@ -193,10 +194,23 @@ function gerarGrafico({ Pendente, "Em andamento": EmAndamento, "Concluída": Con
       datasets: [{
         data: [Pendente, EmAndamento, Concluida],
         backgroundColor: ["#f39c12", "#2980b9", "#27ae60"],
+        borderWidth: 2,
+        borderColor: "#fff"
       }]
     },
     options: {
-      plugins: { legend: { position: "bottom" } }
+      plugins: {
+        legend: { position: "bottom" },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderColor: '#fff',
+          borderWidth: 1
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: true
     }
   });
 }
@@ -207,10 +221,7 @@ async function carregarPerfil() {
     return;
   }
   try {
-    const res = await fetch(`http://localhost:3000/usuarios/${userId}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-    const data = await res.json();
+    const data = await fetchWithAuth(`${baseUrl}/usuarios/${userId}`);
     const user = data.data || data.usuario || data;
     document.getElementById("nomeUsuario").value = user.nomeUsuario || "";
     document.getElementById("emailUsuario").value = user.emailUsuario || "";
@@ -221,7 +232,7 @@ async function carregarPerfil() {
   }
 }
 
-function atualizarPerfil(ev) {
+async function atualizarPerfil(ev) {
   ev.preventDefault();
   if (!userId) {
     alert("Usuário não identificado. Faça login novamente.");
@@ -237,201 +248,194 @@ function atualizarPerfil(ev) {
     emailUsuario: email,
   };
 
-  // Somente adiciona se existir valor
   if (dataCadastroAtual) corpo.dataCadastro = dataCadastroAtual;
   if (idCargoAtual) corpo.idCargo = idCargoAtual;
   if (senha.trim() !== "") corpo.senhaUsuario = senha;
 
-  fetch(`http://localhost:3000/usuarios/${userId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify(corpo),
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao atualizar perfil");
-      return res.json();
-    })
-    .then(data => alert(data.message || "Perfil atualizado."))
-    .catch(err => {
-      console.error(err);
-      alert("Erro ao atualizar perfil.");
+  try {
+    await fetchWithAuth(`${baseUrl}/usuarios/${userId}`, {
+      method: "PUT",
+      body: JSON.stringify(corpo)
     });
+    mostrarRespostaPopup("Perfil atualizado com sucesso.", true);
+  } catch (err) {
+    console.error(err);
+    mostrarRespostaPopup("Erro ao atualizar perfil.", false);
+  }
 }
 
-// --- MODAIS ---
-
-// Modal de Confirmação (Excluir)
-const modalConfirmacao = document.createElement("div");
-modalConfirmacao.id = "modalConfirmacao";
-modalConfirmacao.innerHTML = `
-  <div class="modal-overlay"></div>
-  <div class="modal-box">
-    <p id="modal-text"></p>
-    <div class="modal-actions">
-      <button id="confirmarExcluir">Excluir</button>
-      <button id="cancelarExcluir">Cancelar</button>
-    </div>
-  </div>
-`;
-
-const overlayConfirmacao = modalConfirmacao.querySelector(".modal-overlay");
-const modalBoxConfirmacao = modalConfirmacao.querySelector(".modal-box");
-const textoModalConfirmacao = modalConfirmacao.querySelector("#modal-text");
-const btnConfirmarExcluir = modalConfirmacao.querySelector("#confirmarExcluir");
-const btnCancelarExcluir = modalConfirmacao.querySelector("#cancelarExcluir");
-
-
-function mostrarModalConfirmacao(titulo, onConfirmar) {
-  textoModalConfirmacao.textContent = `Deseja apagar a anotação: '${titulo}'?`;
-  modalConfirmacao.style.display = "block";
-  overlayConfirmacao.style.display = "block";
-  modalBoxConfirmacao.style.display = "block";
-
-  btnConfirmarExcluir.onclick = () => {
-    modalConfirmacao.style.display = "none";
-    overlayConfirmacao.style.display = "none";
-    modalBoxConfirmacao.style.display = "none";
-    onConfirmar();
+// Funções utilitárias
+function fetchWithAuth(url, options = {}) {
+  const headers = options.headers || {};
+  options.headers = {
+    'Content-Type': 'application/json',
+    ...headers,
+    'Authorization': `Bearer ${localStorage.getItem("token")}`
   };
 
-  btnCancelarExcluir.onclick = () => {
-    modalConfirmacao.style.display = "none";
-    overlayConfirmacao.style.display = "none";
-    modalBoxConfirmacao.style.display = "none";
-  };
-}
-
-// Modal para Escrever Recado
-const modalRecado = document.createElement("div");
-modalRecado.id = "modalRecado";
-modalRecado.innerHTML = `
-  <div class="modal-overlay"></div>
-  <div class="modal-box">
-    <h3>Adicionar Recado</h3>
-    <p>Para o dia: <strong id="dataRecado"></strong></p>
-    <textarea id="txtRecado" placeholder="Escreva seu recado aqui..." rows="5"></textarea>
-    <div class="modal-actions">
-      <button id="salvarRecado">Salvar</button>
-      <button id="cancelarRecado">Cancelar</button>
-    </div>
-  </div>
-`;
-
-const overlayRecado = modalRecado.querySelector(".modal-overlay");
-const modalBoxRecado = modalRecado.querySelector(".modal-box");
-const dataRecadoSpan = modalRecado.querySelector("#dataRecado");
-const txtRecadoInput = modalRecado.querySelector("#txtRecado");
-const btnSalvarRecado = modalRecado.querySelector("#salvarRecado");
-const btnCancelarRecado = modalRecado.querySelector("#cancelarRecado");
-
-function mostrarModalRecado(dateStr, onSave) {
-  dataRecadoSpan.textContent = dateStr;
-  txtRecadoInput.value = ""; // Limpa o campo ao abrir
-  modalRecado.style.display = "block";
-  overlayRecado.style.display = "block";
-  modalBoxRecado.style.display = "block";
-
-  btnSalvarRecado.onclick = () => {
-    const anotacao = txtRecadoInput.value.trim();
-    if (anotacao) {
-      onSave(anotacao);
-    }
-    modalRecado.style.display = "none";
-    overlayRecado.style.display = "none";
-    modalBoxRecado.style.display = "none";
-  };
-
-  btnCancelarRecado.onclick = () => {
-    modalRecado.style.display = "none";
-    overlayRecado.style.display = "none";
-    modalBoxRecado.style.display = "none";
-  };
-}
-
-
-// Novo Modal de Confirmação de Conclusão
-const modalConclusao = document.createElement("div");
-modalConclusao.id = "modalConclusao";
-modalConclusao.innerHTML = `
-  <div class="modal-overlay"></div>
-  <div class="modal-box">
-    <p id="modal-conclusao-text"></p>
-    <div class="modal-actions">
-      <button id="confirmarConclusao">Sim</button>
-      <button id="cancelarConclusao">Não</button>
-    </div>
-  </div>
-`;
-
-const overlayConclusao = modalConclusao.querySelector(".modal-overlay");
-const modalBoxConclusao = modalConclusao.querySelector(".modal-box");
-const textoModalConclusao = modalConclusao.querySelector("#modal-conclusao-text");
-const btnConfirmarConclusao = modalConclusao.querySelector("#confirmarConclusao");
-const btnCancelarConclusao = modalConclusao.querySelector("#cancelarConclusao");
-
-function mostrarModalConclusao(tituloTarefa, onConfirmar) {
-  textoModalConclusao.textContent = `Deseja marcar a tarefa '${tituloTarefa}' como Concluída?`;
-  modalConclusao.style.display = "block";
-  overlayConclusao.style.display = "block";
-  modalBoxConclusao.style.display = "block";
-
-  btnConfirmarConclusao.onclick = () => {
-    modalConclusao.style.display = "none";
-    overlayConclusao.style.display = "none";
-    modalBoxConclusao.style.display = "none";
-    onConfirmar();
-  };
-
-  btnCancelarConclusao.onclick = () => {
-    modalConclusao.style.display = "none";
-    overlayConclusao.style.display = "none";
-    modalBoxConclusao.style.display = "none";
-  };
-}
-
-const modalDetalhesTarefa = document.createElement("div");
-modalDetalhesTarefa.id = "modalDetalhesTarefa";
-modalDetalhesTarefa.innerHTML = `
-  <div class="modal-overlay"></div>
-  <div class="modal-box">
-    <h3 id="detalhesTituloTarefa"></h3>
-    <p id="detalhesDescricaoTarefa"></p>
-    <div class="modal-actions">
-      <button id="fecharDetalhesTarefa">Fechar</button>
-    </div>
-  </div>
-`;
-document.body.appendChild(modalDetalhesTarefa);
-
-const overlayDetalhes = modalDetalhesTarefa.querySelector(".modal-overlay");
-const tituloDetalhes = modalDetalhesTarefa.querySelector("#detalhesTituloTarefa");
-const descricaoDetalhes = modalDetalhesTarefa.querySelector("#detalhesDescricaoTarefa");
-const btnFecharDetalhes = modalDetalhesTarefa.querySelector("#fecharDetalhesTarefa");
-
-function mostrarModalDetalhes(titulo, descricao) {
-  tituloDetalhes.textContent = titulo;
-  descricaoDetalhes.textContent = descricao || "Nenhuma descrição disponível.";
-  modalDetalhesTarefa.style.display = "block";
-  overlayDetalhes.style.display = "block";
-}
-
-btnFecharDetalhes.onclick = () => {
-  modalDetalhesTarefa.style.display = "none";
-  overlayDetalhes.style.display = "none";
-};
-
-
-
-// --- FUNÇÕES DO CALENDÁRIO ---
-
-async function buscarTarefasDoUsuario() {
-  const res = await fetch(`http://localhost:3000/usuariostarefas/${userId}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  return fetch(url, options).then(async res => {
+    if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+    return res.json();
   });
-  const data = await res.json();
+}
+
+function mostrarRespostaPopup(mensagem, sucesso = true, tempo = 3000) {
+  if (!divResposta) {
+    alert(mensagem);
+    return;
+  }
+  divResposta.innerText = mensagem;
+  divResposta.className = sucesso ? 'popup sucesso' : 'popup erro';
+  divResposta.style.display = 'block';
+  setTimeout(() => {
+    divResposta.style.display = 'none';
+  }, tempo);
+}
+
+// Funções para criar modais
+function criarModalConfirmacao() {
+  const modal = document.createElement("div");
+  modal.id = "modalConfirmacao";
+  modal.className = "modal";
+  modal.innerHTML = `
+    <div class="modal-overlay"></div>
+    <div class="modal-box">
+      <p id="modal-text"></p>
+      <div class="modal-actions">
+        <button id="confirmarExcluir">Excluir</button>
+        <button id="cancelarExcluir" class="btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "none";
+
+  const textoModal = modal.querySelector("#modal-text");
+  const btnConfirmar = modal.querySelector("#confirmarExcluir");
+  const btnCancelar = modal.querySelector("#cancelarExcluir");
+
+  btnCancelar.onclick = () => modal.style.display = "none";
+
+  window.mostrarModalConfirmacao = (titulo, onConfirmar) => {
+    textoModal.textContent = `Deseja apagar a anotação: '${titulo}'?`;
+    modal.style.display = "block";
+    btnConfirmar.onclick = () => {
+      modal.style.display = "none";
+      onConfirmar();
+    };
+  };
+
+  return modal;
+}
+
+function criarModalRecado() {
+  const modal = document.createElement("div");
+  modal.id = "modalRecado";
+  modal.className = "modal";
+  modal.innerHTML = `
+    <div class="modal-overlay"></div>
+    <div class="modal-box">
+      <h3>Adicionar Recado</h3>
+      <p>Para o dia: <strong id="dataRecado"></strong></p>
+      <textarea id="txtRecado" placeholder="Escreva seu recado aqui..." rows="5"></textarea>
+      <div class="modal-actions">
+        <button id="salvarRecado">Salvar</button>
+        <button id="cancelarRecado" class="btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "none";
+
+  const dataRecadoSpan = modal.querySelector("#dataRecado");
+  const txtRecadoInput = modal.querySelector("#txtRecado");
+  const btnSalvar = modal.querySelector("#salvarRecado");
+  const btnCancelar = modal.querySelector("#cancelarRecado");
+
+  btnCancelar.onclick = () => modal.style.display = "none";
+
+  window.mostrarModalRecado = (dateStr, onSave) => {
+    dataRecadoSpan.textContent = dateStr;
+    txtRecadoInput.value = "";
+    modal.style.display = "block";
+
+    btnSalvar.onclick = () => {
+      const anotacao = txtRecadoInput.value.trim();
+      if (anotacao) onSave(anotacao);
+      modal.style.display = "none";
+    };
+  };
+
+  return modal;
+}
+
+function criarModalConclusao() {
+  const modal = document.createElement("div");
+  modal.id = "modalConclusao";
+  modal.className = "modal";
+  modal.innerHTML = `
+    <div class="modal-overlay"></div>
+    <div class="modal-box">
+      <p id="modal-conclusao-text"></p>
+      <div class="modal-actions">
+        <button id="confirmarConclusao">Sim</button>
+        <button id="cancelarConclusao" class="btn-secondary">Não</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "none";
+
+  const textoModal = modal.querySelector("#modal-conclusao-text");
+  const btnConfirmar = modal.querySelector("#confirmarConclusao");
+  const btnCancelar = modal.querySelector("#cancelarConclusao");
+
+  btnCancelar.onclick = () => modal.style.display = "none";
+
+  window.mostrarModalConclusao = (tituloTarefa, onConfirmar) => {
+    textoModal.textContent = `Deseja marcar a tarefa '${tituloTarefa}' como Concluída?`;
+    modal.style.display = "block";
+
+    btnConfirmar.onclick = () => {
+      modal.style.display = "none";
+      onConfirmar();
+    };
+  };
+
+  return modal;
+}
+
+function criarModalDetalhesTarefa() {
+  const modal = document.createElement("div");
+  modal.id = "modalDetalhesTarefa";
+  modal.className = "modal";
+  modal.innerHTML = `
+    <div class="modal-overlay"></div>
+    <div class="modal-box">
+      <h3 id="detalhesTituloTarefa"></h3>
+      <p id="detalhesDescricaoTarefa"></p>
+      <div class="modal-actions">
+        <button id="fecharDetalhesTarefa">Fechar</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "none";
+
+  const tituloDetalhes = modal.querySelector("#detalhesTituloTarefa");
+  const descricaoDetalhes = modal.querySelector("#detalhesDescricaoTarefa");
+  const btnFechar = modal.querySelector("#fecharDetalhesTarefa");
+
+  btnFechar.onclick = () => modal.style.display = "none";
+
+  window.mostrarModalDetalhes = (titulo, descricao) => {
+    tituloDetalhes.textContent = titulo;
+    descricaoDetalhes.textContent = descricao || "Nenhuma descrição disponível.";
+    modal.style.display = "block";
+  };
+
+  return modal;
+}
+
+// Funções do calendário
+async function buscarTarefasDoUsuario() {
+  const data = await fetchWithAuth(`${baseUrl}/usuariostarefas/${userId}`);
   const tarefas = [];
 
   for (const rel of data.associacoes || []) {
@@ -497,7 +501,7 @@ function inicializarCalendario() {
     tarefas.forEach(t => {
       calendarioInstancia.addEvent({
         title: t.titulo,
-        date: t.dataInicio, // <-- NÃO use split() aqui!
+        date: t.dataInicio,
         extendedProps: { descricao: t.descricao },
         id: `task-${t.titulo}-${t.dataInicio}`
       });
@@ -509,70 +513,3 @@ function inicializarCalendario() {
     calendarioInstancia.render();
   });
 }
-
-// Estilo inline para modal (pode mover para o CSS externo)
-const estiloModal = document.createElement("style");
-estiloModal.innerHTML = `
-#modalDetalhesTarefa {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-}
-
-#modalConfirmacao, #modalRecado, #modalConclusao { /* Adicionado #modalConclusao */
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-}
-.modal-overlay {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  top: 0;
-  left: 0;
-}
-.modal-box {
-  background: white;
-  padding: 20px;
-  width: 300px;
-  max-width: 80vw;
-  border-radius: 10px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  text-align: center;
-  display: flex; /* Para flexbox no conteúdo */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.modal-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%; /* Garante que os botões se espalhem */
-  gap: 15px; /* adicione isso */
-}
-.modal-actions button {
-  padding: 10px 20px;
-  cursor: pointer;
-}
-#modalRecado textarea {
-  width: 90%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: vertical;
-}
-`;
-document.head.appendChild(estiloModal);

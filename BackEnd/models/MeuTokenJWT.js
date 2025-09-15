@@ -35,7 +35,7 @@ module.exports = class MeuTokenJWT {
             nomeUsuario: parametrosClaims.nomeUsuario,
             dataCadastro: parametrosClaims.dataCadastro,
             idCargo: parametrosClaims.idCargo,
-            nomeCargo: parametrosClaims.nomeCargo   // <--- incluímos aqui o nomeCargo
+            nomeCargo: parametrosClaims.nomeCargo   
         };
 
         return jwt.sign(payload, this._key, {

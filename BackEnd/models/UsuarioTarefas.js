@@ -61,6 +61,33 @@ module.exports = class UsuarioTarefa {
         }
     }
 
+        // Retorna todas as associações de uma tarefa específica
+        static async readByTarefa(idTarefa) {
+            const query = "SELECT * FROM usuarios_tarefas WHERE tarefas_idTarefa = ?";
+            try {
+                const conexao = Banco.getConexao();
+                const [resposta] = await conexao.promise().execute(query, [idTarefa]);
+                return resposta;
+            } catch (error) {
+                console.error('Erro ao buscar associações por tarefa:', error);
+                return [];
+            }
+        }
+    
+        // Atualiza o status para todas as associações da tarefa
+        static async updateByTarefa(idTarefa, status) {
+            const query = 'UPDATE usuarios_tarefas SET status = ? WHERE tarefas_idTarefa = ?';
+            try {
+                const conexao = Banco.getConexao();
+                const [resposta] = await conexao.promise().execute(query, [status, idTarefa]);
+                return resposta.affectedRows > 0;
+            } catch (error) {
+                console.error('Erro ao atualizar associações por tarefa:', error);
+                return false;
+            }
+        }
+    
+
 
     // Remove uma associação usuário-tarefa
     static async delete(idUsuario, idTarefa) {

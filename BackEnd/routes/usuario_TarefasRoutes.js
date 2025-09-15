@@ -26,6 +26,22 @@ module.exports = class UsuarioTarefaRoutes {
             this._usuarioTarefaController.UsuarioTarefa_readAll_controller.bind(this._usuarioTarefaController)
         );
 
+        // ✅ Listar todas as associações de uma tarefa (GET /usuariostarefas/tarefa/:idTarefa)
+        this._router.get('/tarefa/:idTarefa',
+            this._jwtMiddleware.validar_token_acesso.bind(this._jwtMiddleware),
+            this._usuarioTarefaMiddleware.validar_parametro_tarefa.bind(this._usuarioTarefaMiddleware),
+            this._usuarioTarefaController.UsuarioTarefa_readByTarefa_controller.bind(this._usuarioTarefaController)
+        );
+
+        // ✅ Atualizar todas as associações de uma tarefa (PUT /usuariostarefas/tarefa/:idTarefa)
+        this._router.put('/tarefa/:idTarefa',
+            this._jwtMiddleware.validar_token_acesso.bind(this._jwtMiddleware),
+            this._usuarioTarefaMiddleware.validar_parametro_tarefa.bind(this._usuarioTarefaMiddleware),
+            this._usuarioTarefaMiddleware.validar_permissao_gerente.bind(this._usuarioTarefaMiddleware), // opcional, veja abaixo
+            this._usuarioTarefaController.UsuarioTarefa_updateByTarefa_controller.bind(this._usuarioTarefaController)
+        );
+
+
         // ✅ NOVA: Listar todas as tarefas de um usuário específico
         this._router.get('/:idUsuario',
             this._jwtMiddleware.validar_token_acesso.bind(this._jwtMiddleware),

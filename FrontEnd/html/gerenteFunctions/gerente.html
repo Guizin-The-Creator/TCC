@@ -1,98 +1,120 @@
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Gerente - Painel de Tarefas</title>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <title>Painel Gerente - Sistema de Tarefas</title>
+    <meta name="description" content="Painel administrativo moderno para gerenciamento de tarefas e equipes" />
+    
+    <!-- Ícones Lucide (apenas uma instância) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" />
+    
+    <!-- CSS personalizado -->
     <link rel="stylesheet" href="../../css/gerentecss/gerente.css" />
 </head>
 
 <body>
-    <div class="sidebar">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" />
-            </svg>
+            <div class="logo-container">
+                <i class="logo-icon" data-lucide="layers-3"></i>
+            </div>
             <span class="system-name">Gerente</span>
         </div>
-        <div class="divider"></div>
+        <nav class="sidebar-nav">
+            <button class="menu-button btn-nav ativo" data-secao="tarefas">
+                <i data-lucide="clipboard-list" class="menu-icon"></i>
+                <span class="menu-label label">Tarefas</span>
+            </button>
+            <button class="menu-button btn-nav" data-secao="atribuicoes">
+                <i data-lucide="user-check" class="menu-icon"></i>
+                <span class="menu-label label">Atribuições</span>
+            </button>
+            <button class="menu-button btn-nav" data-secao="calendario">
+                <i data-lucide="calendar" class="menu-icon"></i>
+                <span class="menu-label label">Calendário</span>
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="menu-button logout-button" id="logoutBtn">
+                <i data-lucide="log-out" class="menu-icon"></i>
+                <span class="menu-label label">Sair</span>
+            </button>
+        </div>
+    </aside>
 
-        <button class="menu-button btn-nav ativo" data-secao="tarefas">
-            <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M3 6h18v2H3zM3 12h18v2H3zM3 18h18v2H3z" />
-            </svg>
-            <span class="label">Tarefas</span>
-        </button>
-        <button class="menu-button btn-nav" data-secao="atribuicoes">
-            <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M8 16h13v2H8zM8 12h13v2H8zM8 8h13v2H8zM3 16h2v2H3zM3 12h2v2H3zM3 8h2v2H3z" />
-            </svg>
-            <span class="label">Atribuições</span>
-        </button>
-        <button class="menu-button btn-nav" data-secao="calendario">
-            <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                    d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10z" />
-            </svg>
-            <span class="label">Calendário</span>
-        </button>
-        <button id="btnLogout" class="menu-button logout"> <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24">
-                <path
-                    d="M16 13v-2H7V8l-5 4 5 4v-3h9zm3-10H5c-1.1 0-2 .9-2 2v6h2V5h14v14H5v-6H3v6c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
-            </svg>
-            <span class="label">Sair</span>
-        </button>
-    </div>
-
+    <!-- Conteúdo Principal -->
     <main class="main-content">
-        <section id="painel-tarefas" class="painel ativo">
-            <h1>Tarefas</h1>
-            <div class="cards-resumo">
-                <div class="card-box">
-                    <h3 id="cardTotal">0</h3>
-                    <p>Total</p>
+        <!-- Painel Tarefas -->
+        <section class="content-section active" id="painel-tarefas">
+            <div class="section-header">
+                <h1>Tarefas</h1>
+                <button class="btn-primary" id="btnNovaTarefa">Nova Tarefa</button>
+            </div>
+            <div class="stats-grid cards-resumo">
+                <div class="stats-card total card-box">
+                    <div class="stats-text">
+                        <p class="stats-title">Total</p>
+                        <h3 id="cardTotal">0</h3>
+                    </div>
                 </div>
-                <div class="card-box verde">
-                    <h3 id="cardConcluidas">0</h3>
-                    <p>Concluídas</p>
+                <div class="stats-card completed verde card-box">
+                    <div class="stats-text">
+                        <p class="stats-title">Concluídas</p>
+                        <h3 id="cardConcluidas">0</h3>
+                    </div>
                 </div>
-                <div class="card-box amarelo">
-                    <h3 id="cardPendentes">0</h3>
-                    <p>Pendentes</p>
+                <div class="stats-card pending amarelo card-box">
+                    <div class="stats-text">
+                        <p class="stats-title">Pendentes</p>
+                        <h3 id="cardPendentes">0</h3>
+                    </div>
                 </div>
-                <div class="card-box azul">
-                    <h3 id="cardAndamento">0</h3>
-                    <p>Em andamento</p>
+                <div class="stats-card progress azul card-box">
+                    <div class="stats-text">
+                        <p class="stats-title">Em Andamento</p>
+                        <h3 id="cardAndamento">0</h3>
+                    </div>
                 </div>
             </div>
-
-            <button id="btnNovaTarefa" class="btn-primary">Nova Tarefa</button>
+            <div class="table-container">
+                <table class="task-table tabela" id="tabelaTarefas">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descrição</th>
+                            <th>Prioridade</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table></div>
+                </div><div class="empty-state" id="emptyState" style="display: none;">
+                    <p>Nenhuma tarefa encontrada</p>
+                </div>
+            </div>
             <div class="resposta" id="respostaTarefas"></div>
-            <table id="tabelaTarefas" class="tabela">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Descrição</th>
-                        <th>Prioridade</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Valor</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </section>
 
-        <section id="painel-atribuicoes" class="painel oculto">
+        <!-- Painel Atribuições -->
+        <section class="content-section" id="painel-atribuicoes">
             <h1>Atribuições</h1>
-            <button id="btnNovaAtribuicao" class="btn-primary">Nova Atribuição</button>
+            <button class="btn-primary" id="btnNovaAtribuicao">Nova Atribuição</button>
             <div class="resposta" id="respostaAtribuicoes"></div>
-            <table id="tabelaAtribuicoes" class="tabela">
+            <div class="table-container">
+<div class="table-container"><table class="task-table tabela" class="tabela" id="tabelaAtribuicoes">
                 <thead>
                     <tr>
                         <th>Usuário</th>
@@ -102,84 +124,140 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-            </table>
-        </section>
+            </table></div>
+        </div></section>
 
-        <section id="painel-calendario" class="painel oculto">
+        <!-- Painel Calendário -->
+        <section class="content-section" id="painel-calendario">
             <h1>Calendário de Tarefas</h1>
             <div id="calendar"></div>
         </section>
     </main>
 
-    <!-- Modal Tarefa -->
-    <div id="modalTarefa" class="modal oculto">
+    <!-- Modais -->
+    <div class="modal-overlay modal oculto" id="modalRecado">
         <div class="modal-content">
-            <h3 id="modalTituloTarefa">Nova Tarefa</h3>
-            <form id="formTarefa">
-                <input type="hidden" id="inputIdTarefa" />
+            <div class="modal-header">
+                <h3>Adicionar Recado</h3>
+            </div>
+            <div class="modal-body">
+                <p>Data: <span id="dataRecado"></span></p>
+                <textarea id="txtRecado" rows="4" placeholder="Digite seu recado..." required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="salvarRecado">Salvar</button>
+                <button class="btn-secondary" id="cancelarRecado">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-                <label for="inputTituloTarefa">Título:</label>
-                <input type="text" id="inputTituloTarefa" required />
+    <div class="modal-overlay modal oculto" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmação</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal-text-confirmacao">Tem certeza?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="confirmarAcao">Confirmar</button>
+                <button class="btn-secondary" id="cancelarAcao">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-                <label for="inputDescricaoTarefa">Descrição:</label>
-                <textarea id="inputDescricaoTarefa" rows="3"></textarea>
+    <div class="modal-overlay modal oculto" id="modalDetalhesTarefa">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detalhesTituloTarefa">Detalhes da Tarefa</h3>
+            </div>
+            <div class="modal-body">
+                <pre id="detalhesDescricaoTarefa"></pre>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="fecharDetalhesTarefa">Fechar</button>
+            </div>
+        </div>
+    </div>
 
-                <label for="selectPrioridadeTarefa">Prioridade:</label>
-                <select id="selectPrioridadeTarefa">
-                    <option>Baixa</option>
-                    <option>Média</option>
-                    <option>Alta</option>
-                </select>
-
-                <label for="inputDataInicio">Data Início:</label>
-                <input type="date" id="inputDataInicio" required />
-
-                <label for="inputDataFim">Data Fim:</label>
-                <input type="date" id="inputDataFim" required />
-
-                <label for="inputValorOpc">Valor:</label>
-                <input type="number" id="inputValorOpc" step="0.01" value="0.00" />
-
-                <div class="modal-actions">
-                    <button type="submit">Salvar</button>
-                    <button type="button" id="btnCancelarTarefa">Cancelar</button>
+    <div class="modal-overlay modal oculto" id="modalTarefa">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTituloTarefa">Nova Tarefa</h3>
+            </div>
+            <form id="formTarefa" class="task-form">
+                <input id="inputIdTarefa" type="hidden" />
+                <div class="form-group">
+                    <label for="inputTituloTarefa">Título *</label>
+                    <input id="inputTituloTarefa" type="text" required />
                 </div>
-
+                <div class="form-group">
+                    <label for="inputDescricaoTarefa">Descrição</label>
+                    <textarea id="inputDescricaoTarefa" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="selectPrioridadeTarefa">Prioridade</label>
+                    <select id="selectPrioridadeTarefa">
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média" selected>Média</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="inputDataInicio">Data Início *</label>
+                        <input id="inputDataInicio" type="date" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDataFim">Data Fim *</label>
+                        <input id="inputDataFim" type="date" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputValorOpc">Valor (R$)</label>
+                    <input id="inputValorOpc" type="number" min="0" step="0.01" value="0" />
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" type="submit">Salvar</button>
+                    <button class="btn-secondary" id="btnCancelarTarefa" type="button">Cancelar</button>
+                </div>
                 <div class="resposta" id="respostaTarefasModal"></div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Atribuição -->
-    <div id="modalAtribuicao" class="modal oculto">
+    <div class="modal-overlay modal oculto" id="modalAtribuicao">
         <div class="modal-content">
-            <h3 id="modalTituloAtribuicao">Nova Atribuição</h3>
-            <form id="formAtribuicao">
-                <label for="selectUsuario">Usuário:</label>
-                <select id="selectUsuario" required></select>
-
-                <label for="selectTarefa">Tarefa:</label>
-                <select id="selectTarefa" required></select>
-
-                <label for="selectStatusAtribuicao">Status:</label>
-                <select id="selectStatusAtribuicao">
-                    <option value="pendente">Pendente</option>
-                    <option value="andamento">Em andamento</option>
-                    <option value="concluida">Concluída</option>
-                </select>
-
-                <div class="modal-actions">
-                    <button type="submit">Salvar</button>
-                    <button type="button" id="btnCancelarAtribuicao">Cancelar</button>
+            <div class="modal-header">
+                <h3 id="modalTituloAtribuicao">Nova Atribuição</h3>
+            </div>
+            <form id="formAtribuicao" class="task-form">
+                <div class="form-group">
+                    <label for="selectUsuario">Usuário *</label>
+                    <select id="selectUsuario" required></select>
                 </div>
-
+                <div class="form-group">
+                    <label for="selectTarefa">Tarefa *</label>
+                    <select id="selectTarefa" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="selectStatusAtribuicao">Status</label>
+                    <select id="selectStatusAtribuicao">
+                        <option value="pendente">Pendente</option>
+                        <option value="andamento">Em andamento</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" type="submit">Salvar</button>
+                    <button class="btn-secondary" id="btnCancelarAtribuicao" type="button">Cancelar</button>
+                </div>
                 <div class="resposta" id="respostaAtribuicoesModal"></div>
             </form>
         </div>
     </div>
 
-
-
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="../../javascript/gerenteFunctions/dashboardGerente.js"></script>
 </body>

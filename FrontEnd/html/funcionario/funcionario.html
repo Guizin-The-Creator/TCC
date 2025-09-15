@@ -14,7 +14,7 @@
       <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" />
       </svg>
-      <span class="system-name">Painel</span>
+    
     </div>
     <div class="divider"></div>
 
@@ -39,19 +39,21 @@
   <main class="main-content">
     <section id="painel-tarefas">
       <h2>Minhas Tarefas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Status</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Prioridade</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyTarefas"></tbody>
-      </table>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Status</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Prioridade</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyTarefas"></tbody>
+        </table>
+      </div>
       <div id="formEditarContainer" class="oculto">
         <h3>Editar Status da Tarefa</h3>
         <form id="formEditarRelacao">
@@ -70,17 +72,30 @@
 
     <section id="painel-visao-geral" class="oculto">
       <h2>Visão Geral das Tarefas</h2>
-      <canvas id="graficoTarefas"></canvas>
+      <div class="chart-container">
+        <canvas id="graficoTarefas"></canvas>
+      </div>
     </section>
 
     <section id="painel-perfil" class="oculto">
       <h2>Meu Perfil</h2>
-      <form id="formPerfil">
-        <label>Nome:<br><input type="text" id="nomeUsuario" required autocomplete="username"></label><br><br>
-        <label>Email:<br><input type="email" id="emailUsuario" required autocomplete="email"></label><br><br>
-        <label>Senha:<br><input type="password" id="senhaUsuario" autocomplete="current-password"></label><br><br>
-        <button type="submit">Salvar</button>
-      </form>
+      <div class="form-card">
+        <form id="formPerfil">
+          <div class="form-group">
+            <label>Nome:</label>
+            <input type="text" id="nomeUsuario" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="emailUsuario" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="senhaUsuario" autocomplete="current-password">
+          </div>
+          <button type="submit">Salvar</button>
+        </form>
+      </div>
     </section>
 
     <section id="painel-calendario" class="oculto">
@@ -90,17 +105,6 @@
   </main>
 
   <div id="postit" class="oculto"></div>
-
-  <div id="modalConclusao" class="modal">
-    <div class="modal-overlay"></div>
-    <div class="modal-box">
-      <p id="modal-conclusao-text"></p>
-      <div class="modal-actions">
-        <button id="confirmarConclusao">Sim</button>
-        <button id="cancelarConclusao">Não</button>
-      </div>
-    </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
