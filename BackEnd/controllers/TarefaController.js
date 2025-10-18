@@ -9,7 +9,6 @@ module.exports = class TarefaController {
         tarefa.prioridadeTarefa = req.body.prioridadeTarefa;  // novo
         tarefa.dataInicio = req.body.dataInicio;
         tarefa.dataFim = req.body.dataFim;
-        tarefa.valorOpc = req.body.valorOpc;
 
         const sucesso = await tarefa.create();
         const jwt = new MeuTokenJWT();
@@ -72,7 +71,6 @@ module.exports = class TarefaController {
         tarefa.prioridadeTarefa = req.body.prioridadeTarefa;  // novo
         tarefa.dataInicio = req.body.dataInicio;
         tarefa.dataFim = req.body.dataFim;
-        tarefa.valorOpc = req.body.valorOpc;
 
         const sucesso = await tarefa.update();
         const jwt = new MeuTokenJWT();

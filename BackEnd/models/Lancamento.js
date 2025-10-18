@@ -3,6 +3,8 @@ const Banco = require('./Banco');
 module.exports = class Lancamento {
     constructor() {
         this._idLancamento = null;
+        this._tituloLancamento = null;
+        this._descricaoLancamento = null;
         this._vencimentoLancamento = null;
         this._valorLancamento = null;
         this._classificacaoLancamento = null;
@@ -10,16 +12,20 @@ module.exports = class Lancamento {
         this._statusLancamento = null;
         this._idCategoria = null;
         this._idSubcategoria = null;
+
     }
 
     // CREATE
     async create() {
         const query = `
       INSERT INTO lancamentos
-        (vencimentoLancamento, valorLancamento, classificacaoLancamento, pagamentoLancamento, statusLancamento, idCategoria, idSubcategoria)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+        (tituloLancamento, descricaoLancamento, vencimentoLancamento, valorLancamento, classificacaoLancamento, pagamentoLancamento, statusLancamento, idCategoria, idSubcategoria)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+
     `;
         const values = [
+            this.tituloLancamento,
+            this.descricaoLancamento,
             this.vencimentoLancamento,
             this.valorLancamento,
             this.classificacaoLancamento,
@@ -68,11 +74,21 @@ module.exports = class Lancamento {
     // UPDATE
     async update() {
         const query = `
-      UPDATE lancamentos
-         SET vencimentoLancamento = ?, valorLancamento = ?, classificacaoLancamento = ?, pagamentoLancamento = ?, statusLancamento = ?, idCategoria = ?, idSubcategoria = ?
-       WHERE idLancamento = ?
+        UPDATE lancamentos SET 
+            tituloLancamento = ?, 
+            descricaoLancamento = ?, 
+            vencimentoLancamento = ?, 
+            valorLancamento = ?, 
+            classificacaoLancamento = ?, 
+            pagamentoLancamento = ?, 
+            statusLancamento = ?, 
+            idCategoria = ?, 
+            idSubcategoria = ?
+        WHERE idLancamento = ?
     `;
         const values = [
+            this.tituloLancamento,
+            this.descricaoLancamento,
             this.vencimentoLancamento,
             this.valorLancamento,
             this.classificacaoLancamento,
@@ -81,6 +97,7 @@ module.exports = class Lancamento {
             this.idCategoria,
             this.idSubcategoria,
             this.idLancamento
+
         ];
         try {
             const conexao = Banco.getConexao();
@@ -174,4 +191,10 @@ module.exports = class Lancamento {
         this._idSubcategoria = val;
 
     }
+
+    get tituloLancamento() { return this._tituloLancamento; }
+    set tituloLancamento(val) { this._tituloLancamento = val; }
+
+    get descricaoLancamento() { return this._descricaoLancamento; }
+    set descricaoLancamento(val) { this._descricaoLancamento = val; }
 };

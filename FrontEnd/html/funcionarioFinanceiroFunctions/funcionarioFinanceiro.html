@@ -2,362 +2,617 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel do Funcionário Financeiro</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel Funcionário Financeiro - Sistema de Tarefas</title>
+  <meta name="description" content="Painel do funcionário financeiro para gerenciamento de tarefas e finanças" />
+
+  <!-- Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Flatpickr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <!-- Link para o Tailwind CSS CDN para estilos responsivos -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../../css/funcionarioFinanceirocss/funcionarioFinanceiro.css">
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
 
+  <!-- FullCalendar CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" />
 
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="../../css/funcionarioFinanceirocss/funcionarioFinanceiro.css" />
 </head>
 
 <body>
-  <div class="sidebar">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" />
-      </svg>
-      <span class="system-name">Painel Financeiro</span>
+      <div class="logo-container">
+        <i class="logo-icon" data-lucide="layers-3"></i>
+      </div>
+      <span class="system-name">Financeiro</span>
     </div>
+    <nav class="sidebar-nav">
+      <!-- Seção Tarefas -->
+      <div class="sidebar-section-header">Minhas Tarefas</div>
 
-    <div class="divider"></div>
-    <div class="sidebar-section-header">ÁREA DO FUNCIONÁRIO</div>
+      <button class="menu-button btn-nav ativo" data-secao="tarefas">
+        <i data-lucide="clipboard-list" class="menu-icon"></i>
+        <span class="menu-label">Tarefas</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="visao-geral">
+        <i data-lucide="pie-chart" class="menu-icon"></i>
+        <span class="menu-label">Visão Geral</span>
+      </button>
 
-    <a href="#" onclick="mostrarPainel('tarefas')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M3 6h18v2H3zM3 12h18v2H3zM3 18h18v2H3z" />
-      </svg>
-      <span class="label">Tarefas</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('visao-geral')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
-      </svg>
-      <span class="label">Visão Geral</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('perfil')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4zm0-2a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" />
-      </svg>
-      <span class="label">Meu Perfil</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('calendario')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z" />
-      </svg>
-      <span class="label">Calendário</span>
-    </a>
+      <div class="divider"></div>
 
-    <div class="divider"></div>
-    <div class="sidebar-section-header">ÁREA FINANCEIRA</div>
+      <!-- Seção Financeira -->
+      <div class="sidebar-section-header">Área Financeira</div>
 
-    <a href="#" onclick="mostrarPainel('visao-geral-financeira')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
-      </svg>
-      <span class="label">Visão Geral Financeira</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('lancamentos')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M22 6h-8V4h-2v2h-4V4H6v2H2v15h20V6zm-2 13H4V8h16v11zM9 10h6v2H9v-2z" />
-      </svg>
-      <span class="label">Lançamentos</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('extratos')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10zm-12-6h4v4h-4z" />
-      </svg>
-      <span class="label">Extratos</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('indices')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M16 6l-3.29 3.29-2.5-2.5L2 16.59 3.41 18l7.59-7.59 2.5 2.5L18 8zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16z" />
-      </svg>
-      <span class="label">Índices</span>
-    </a>
-    <a href="#" onclick="mostrarPainel('produtos')" class="menu-button">
-      <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M11 9H9V2H7v7H5V2H3v7c0 2.21 1.79 4 4 4s4-1.79 4-4V2h-2v7zm5-3v8c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2zm-2 2H8v6h6V8z" />
-      </svg>
-      <span class="label">Produtos</span>
-    </a>
-  </div>
+      <button class="menu-button btn-nav" data-secao="visao-geral-financeira">
+        <i data-lucide="bar-chart-3" class="menu-icon"></i>
+        <span class="menu-label">Visão Financeira</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="lancamentos">
+        <i data-lucide="dollar-sign" class="menu-icon"></i>
+        <span class="menu-label">Lançamentos</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="extratos">
+        <i data-lucide="file-text" class="menu-icon"></i>
+        <span class="menu-label">Extratos</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="indices">
+        <i data-lucide="trending-up" class="menu-icon"></i>
+        <span class="menu-label">Índices</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="produtos">
+        <i data-lucide="package" class="menu-icon"></i>
+        <span class="menu-label">Produtos</span>
+      </button>
 
+      <div class="divider"></div>
+
+      <button class="menu-button btn-nav" data-secao="calendario">
+        <i data-lucide="calendar" class="menu-icon"></i>
+        <span class="menu-label">Calendário</span>
+      </button>
+      <button class="menu-button btn-nav" data-secao="perfil">
+        <i data-lucide="user" class="menu-icon"></i>
+        <span class="menu-label">Meu Perfil</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="menu-button logout-button" id="logoutBtn">
+        <i data-lucide="log-out" class="menu-icon"></i>
+        <span class="menu-label">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Conteúdo Principal -->
   <main class="main-content">
-    <div class="dashboard-header">
+    <!-- Painel Tarefas -->
+    <section class="content-section active" id="painel-tarefas">
+      <div class="section-header">
+        <h1>Minhas Tarefas</h1>
+      </div>
 
+      <!-- Post-it fixado -->
+      <div id="postit" class="postit-container oculto"></div>
 
-      <div class="date-display" id="current-date"></div>
-    </div>
+      <!-- Painel de Filtros -->
+      <div class="filters-panel">
+        <div class="filters-header">
+          <h3>
+            <i data-lucide="filter" class="filter-icon"></i>
+            Filtros
+          </h3>
+          <button class="btn-clear-filters" id="btnLimparFiltrosTarefas">
+            <i data-lucide="x" class="btn-icon"></i>
+            Limpar Filtros
+          </button>
+        </div>
 
-    <div id="postit" class="oculto"></div>
-
-    <section id="painel-tarefas" class="oculto">
-      <h2>Minhas Tarefas</h2>
-      <div id="formEditarContainer" class="form-container oculto">
-        <h3>Editar Status da Tarefa</h3>
-        <form id="formEditarRelacao">
-          <input type="hidden" id="idTarefaSelecionada">
-          <label for="txtStatusEditar">Status:</label>
-          <select id="txtStatusEditar" required>
-            <option value="Pendente">Pendente</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Concluída">Concluída</option>
+        <div class="filter-selector">
+          <label>
+            <i data-lucide="settings-2" class="input-icon"></i>
+            Adicionar Filtro
+          </label>
+          <select id="seletorFiltroTarefas" class="filter-type-select">
+            <option value="">Selecione um filtro...</option>
+            <option value="busca">🔍 Buscar</option>
+            <option value="status">✅ Status</option>
+            <option value="prioridade">🚩 Prioridade</option>
+            <option value="data">📅 Data</option>
+            <option value="ordenar">↕️ Ordenar</option>
           </select>
-          <button type="submit">Salvar</button>
+        </div>
+
+        <div id="filtrosAtivosTarefas" class="active-filters"></div>
+      </div>
+
+      <!-- Tabela de Tarefas -->
+      <div class="table-container">
+        <table class="task-table tabela" id="tabelaTarefas">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Status</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Prioridade</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyTarefas"></tbody>
+        </table>
+      </div>
+
+      <!-- Formulário de Edição -->
+      <div id="formEditarContainer" class="form-edit-container oculto">
+        <div class="form-edit-header">
+          <h3>
+            <i data-lucide="edit-3" class="form-icon"></i>
+            Editar Status da Tarefa
+          </h3>
+        </div>
+        <form id="formEditarRelacao" class="task-form">
+          <input type="hidden" id="idTarefaSelecionada">
+          <div class="form-group">
+            <label for="txtStatusEditar">Status *</label>
+            <select id="txtStatusEditar" required>
+              <option value="Pendente">Pendente</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Concluída">Concluída</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" type="submit">
+              <i data-lucide="check" class="btn-icon"></i>
+              Atualizar
+            </button>
+            <button class="btn-secondary" id="btnCancelarEdicao" type="button">
+              <i data-lucide="x" class="btn-icon"></i>
+              Cancelar
+            </button>
+          </div>
         </form>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Status</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Prioridade</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyTarefas">
-          <!-- Conteúdo será carregado dinamicamente pelo JS -->
-        </tbody>
-      </table>
     </section>
 
-    <section id="painel-visao-geral" class="oculto">
-      <h2>Visão Geral das Tarefas</h2>
-      <canvas id="graficoTarefas"></canvas>
+    <!-- Painel Visão Geral -->
+    <section class="content-section" id="painel-visao-geral">
+      <div class="section-header">
+        <h1>Visão Geral das Tarefas</h1>
+      </div>
+      <div class="chart-container">
+        <canvas id="graficoTarefas"></canvas>
+      </div>
     </section>
 
-    <section id="painel-perfil" class="oculto">
-      <h2>Meu Perfil</h2>
-      <form id="formPerfil">
-        <label>Nome:<br><input type="text" id="nomeUsuario" required autocomplete="username"></label><br><br>
-        <label>Email:<br><input type="email" id="emailUsuario" required autocomplete="email"></label><br><br>
-        <label>Senha:<br><input type="password" id="senhaUsuario" autocomplete="current-password"
-            placeholder="Nova senha"></label><br><br>
-        <button type="submit">Salvar</button>
-      </form>
-    </section>
+    <!-- Painel Visão Geral Financeira -->
+    <section class="content-section" id="painel-visao-geral-financeira">
+      <div class="section-header">
+        <h1>Visão Geral Financeira</h1>
+      </div>
 
-    <section id="painel-calendario" class="oculto">
-      <h2>Calendário de Tarefas & Anotações</h2>
-      <div id="calendario"></div>
-    </section>
-
-    <section id="painel-visao-geral-financeira" class="oculto">
-      <h2>Visão Geral Financeira</h2>
-      <div class="dashboard-grid">
-        <div class="kpi-card">
+      <div class="kpi-grid">
+        <div class="kpi-card income">
           <h3>Receitas (Mês Atual)</h3>
-          <p id="totalReceitasMes">R$ 0,00</p>
+          <p class="value" id="totalReceitasMes">R$ 0,00</p>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card expense">
           <h3>Despesas (Mês Atual)</h3>
-          <p id="totalDespesasMes">R$ 0,00</p>
+          <p class="value" id="totalDespesasMes">R$ 0,00</p>
         </div>
         <div class="kpi-card">
           <h3>Saldo Atual</h3>
-          <p id="saldoAtual">R$ 0,00</p>
+          <p class="value" id="saldoAtual">R$ 0,00</p>
         </div>
         <div class="kpi-card">
           <h3>Lançamentos em Aberto</h3>
-          <p id="lancamentosEmAbertoCount">0</p>
+          <p class="value" id="lancamentosEmAbertoCount">0</p>
         </div>
       </div>
 
       <div class="charts-grid">
         <div class="chart-card">
           <h3>Fluxo de Caixa Mensal</h3>
-          <canvas id="graficoFluxoCaixa"></canvas>
+          <div class="chart-container">
+            <canvas id="graficoFluxoCaixa"></canvas>
+          </div>
         </div>
         <div class="chart-card">
           <h3>Lançamentos por Status</h3>
-          <canvas id="graficoLancamentosStatus"></canvas>
+          <div class="chart-container">
+            <canvas id="graficoLancamentosStatus"></canvas>
+          </div>
         </div>
         <div class="chart-card">
           <h3>Lançamentos por Classificação</h3>
-          <canvas id="graficoLancamentosClassificacao"></canvas>
+          <div class="chart-container">
+            <canvas id="graficoLancamentosClassificacao"></canvas>
+          </div>
         </div>
         <div class="chart-card">
           <h3>Extratos por Tipo</h3>
-          <canvas id="graficoExtratosTipo"></canvas>
+          <div class="chart-container">
+            <canvas id="graficoExtratosTipo"></canvas>
+          </div>
         </div>
       </div>
-      <div class="actions">
-        <button id="btnExportarXML">Exportar Dados Financeiros (XML)</button>
+
+      <div class="section-header" style="margin-top: 2rem;">
+        <button class="btn-primary" id="btnExportarXML">
+          <i data-lucide="download" class="btn-icon"></i>
+          Exportar Dados (XML)
+        </button>
       </div>
     </section>
 
-    <section id="painel-lancamentos" class="oculto">
-      <h2>Lançamentos Financeiros</h2>
-      <div class="actions">
-        <button onclick="abrirModalCriarLancamento()">Adicionar Lançamento</button>
+    <!-- Painel Lançamentos -->
+    <section class="content-section" id="painel-lancamentos">
+      <div class="section-header">
+        <h1>Lançamentos Financeiros</h1>
+        <button class="btn-primary" id="btnNovoLancamento">
+          <i data-lucide="plus" class="btn-icon"></i>
+          Novo Lançamento
+        </button>
       </div>
-      <div class="filters">
-        <label>Status:
-          <select id="filtroLancamentoStatus">
-            <option value="">Todos</option>
-            <option value="Em aberto">Em aberto</option>
-            <option value="Pago">Pago</option>
-            <option value="Vencido">Vencido</option>
+
+      <!-- Filtros -->
+      <div class="filters-panel">
+        <div class="filters-header">
+          <h3>
+            <i data-lucide="filter" class="filter-icon"></i>
+            Filtros
+          </h3>
+          <button class="btn-clear-filters" id="btnLimparFiltrosLancamentos">
+            <i data-lucide="x" class="btn-icon"></i>
+            Limpar Filtros
+          </button>
+        </div>
+
+        <div class="filter-selector">
+          <label>
+            <i data-lucide="settings-2" class="input-icon"></i>
+            Adicionar Filtro
+          </label>
+          <select id="seletorFiltroLancamentos" class="filter-type-select">
+            <option value="">Selecione um filtro...</option>
+            <option value="busca">🔍 Buscar</option>
+            <option value="status">✅ Status</option>
+            <option value="classificacao">📋 Classificação</option>
+            <option value="data">📅 Data</option>
+            <option value="ordenar">↕️ Ordenar</option>
           </select>
-        </label>
-        <label>Classificação:
-          <select id="filtroLancamentoClassificacao">
-            <option value="">Todas</option>
-            <option value="Receita">Receita</option>
-            <option value="Despesa">Despesa</option>
-          </select>
-        </label>
+        </div>
+
+        <div id="filtrosAtivosLancamentos" class="active-filters"></div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Vencimento</th>
-            <th>Status</th>
-            <th>Classificação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyLancamentos">
-          <!-- Conteúdo será carregado dinamicamente pelo JS -->
-        </tbody>
-      </table>
+
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Vencimento</th>
+              <th>Pagamento</th>
+              <th>Status</th>
+              <th>Classificação</th>
+              <th>Categoria</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyLancamentos"></tbody>
+        </table>
+      </div>
     </section>
 
-    <section id="painel-extratos" class="oculto">
-      <h2>Extratos</h2>
-      <div class="actions">
-        <button onclick="abrirModalCriarExtrato()">Adicionar Extrato</button>
+    <!-- Painel Extratos -->
+    <section class="content-section" id="painel-extratos">
+      <div class="section-header">
+        <h1>Extratos</h1>
+        <button class="btn-primary" id="btnNovoExtrato">
+          <i data-lucide="plus" class="btn-icon"></i>
+          Novo Extrato
+        </button>
       </div>
-      <div class="filters">
-        <label>Tipo:
-          <select id="filtroExtratoTipo">
-            <option value="">Todos</option>
-            <option value="Entrada">Entrada</option>
-            <option value="Saida">Saída</option>
+
+      <!-- Filtros -->
+      <div class="filters-panel">
+        <div class="filters-header">
+          <h3>
+            <i data-lucide="filter" class="filter-icon"></i>
+            Filtros
+          </h3>
+          <button class="btn-clear-filters" id="btnLimparFiltrosExtratos">
+            <i data-lucide="x" class="btn-icon"></i>
+            Limpar Filtros
+          </button>
+        </div>
+
+        <div class="filter-selector">
+          <label>
+            <i data-lucide="settings-2" class="input-icon"></i>
+            Adicionar Filtro
+          </label>
+          <select id="seletorFiltroExtratos" class="filter-type-select">
+            <option value="">Selecione um filtro...</option>
+            <option value="busca">🔍 Buscar</option>
+            <option value="tipo">📋 Tipo</option>
+            <option value="data">📅 Data</option>
+            <option value="ordenar">↕️ Ordenar</option>
           </select>
-        </label>
-        <label>Data Início:
-          <input type="date" id="filtroExtratoDataInicio">
-        </label>
-        <label>Data Fim:
-          <input type="date" id="filtroExtratoDataFim">
-        </label>
+        </div>
+
+        <div id="filtrosAtivosExtratos" class="active-filters"></div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Data</th>
-            <th>Tipo</th>
-            <th>Produto</th>
-            <th>Ações</th> <!-- Coluna adicionada -->
-          </tr>
-        </thead>
-        <tbody id="tbodyExtratos"></tbody>
-      </table>
+
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Lançamento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyExtratos"></tbody>
+        </table>
+      </div>
     </section>
 
-    <section id="painel-indices" class="oculto">
-      <h2>Índices Financeiros</h2>
-      <div class="actions">
-        <button onclick="abrirModalCriarIndice()">Adicionar Índice</button>
+    <!-- Painel Índices -->
+    <section class="content-section" id="painel-indices">
+      <div class="section-header">
+        <h1>Índices Financeiros</h1>
+        <button class="btn-primary" id="btnNovoIndice">
+          <i data-lucide="plus" class="btn-icon"></i>
+          Novo Índice
+        </button>
       </div>
-      <div class="filters">
-        <label>Ano:
-          <select id="filtroIndiceAno">
-            <!-- Opções serão carregadas dinamicamente pelo JS -->
+
+      <!-- Filtros -->
+      <div class="filters-panel">
+        <div class="filters-header">
+          <h3>
+            <i data-lucide="filter" class="filter-icon"></i>
+            Filtros
+          </h3>
+          <button class="btn-clear-filters" id="btnLimparFiltrosIndices">
+            <i data-lucide="x" class="btn-icon"></i>
+            Limpar Filtros
+          </button>
+        </div>
+
+        <div class="filter-selector">
+          <label>
+            <i data-lucide="settings-2" class="input-icon"></i>
+            Adicionar Filtro
+          </label>
+          <select id="seletorFiltroIndices" class="filter-type-select">
+            <option value="">Selecione um filtro...</option>
+            <option value="busca">🔍 Buscar</option>
+            <option value="ano">📅 Ano</option>
+            <option value="ordenar">↕️ Ordenar</option>
           </select>
-        </label>
+        </div>
+
+        <div id="filtrosAtivosIndices" class="active-filters"></div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome do Índice</th>
-            <th>Taxa</th>
-            <th>Ano</th>
-            <th>Subsegmento</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyIndices">
-          <!-- Conteúdo será carregado dinamicamente pelo JS -->
-        </tbody>
-      </table>
-      <canvas id="graficoIndicesTaxas"></canvas>
+
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Nome do Índice</th>
+              <th>Taxa</th>
+              <th>Ano</th>
+              <th>Subsegmento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyIndices"></tbody>
+        </table>
+      </div>
+      <div class="chart-container" style="margin-top: 2rem;">
+        <canvas id="graficoIndicesTaxas"></canvas>
+      </div>
     </section>
 
-    <section id="painel-produtos" class="oculto">
-      <h2>Produtos</h2>
-      <div class="actions">
-        <button onclick="abrirModalCriarProduto()">Adicionar Produto</button>
+    <!-- Painel Produtos -->
+    <section class="content-section" id="painel-produtos">
+      <div class="section-header">
+        <h1>Produtos</h1>
+        <button class="btn-primary" id="btnNovoProduto">
+          <i data-lucide="plus" class="btn-icon"></i>
+          Novo Produto
+        </button>
       </div>
-      <div class="filters">
-        <label>Segmento:
-          <select id="filtroProdutoSegmento">
-            <option value="">Todos</option>
-            <option value="Crédito">Crédito</option>
-            <option value="Investimento">Investimento</option>
-            <option value="Serviço">Serviço</option>
+
+      <!-- Filtros -->
+      <div class="filters-panel">
+        <div class="filters-header">
+          <h3>
+            <i data-lucide="filter" class="filter-icon"></i>
+            Filtros
+          </h3>
+          <button class="btn-clear-filters" id="btnLimparFiltrosProdutos">
+            <i data-lucide="x" class="btn-icon"></i>
+            Limpar Filtros
+          </button>
+        </div>
+
+        <div class="filter-selector">
+          <label>
+            <i data-lucide="settings-2" class="input-icon"></i>
+            Adicionar Filtro
+          </label>
+          <select id="seletorFiltroProdutos" class="filter-type-select">
+            <option value="">Selecione um filtro...</option>
+            <option value="busca">🔍 Buscar</option>
+            <option value="segmento">📋 Segmento</option>
+            <option value="ordenar">↕️ Ordenar</option>
           </select>
-        </label>
+        </div>
+
+        <div id="filtrosAtivosProdutos" class="active-filters"></div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome do Produto</th>
-            <th>Custo</th>
-            <th>Segmento</th>
-            <th>Subsegmento</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyProdutos">
-          <!-- Conteúdo será carregado dinamicamente pelo JS -->
-        </tbody>
-      </table>
-      <canvas id="graficoProdutosCusto"></canvas>
+
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Nome do Produto</th>
+              <th>Custo</th>
+              <th>Segmento</th>
+              <th>Subsegmento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyProdutos"></tbody>
+        </table>
+      </div>
+      <div class="chart-container" style="margin-top: 2rem;">
+        <canvas id="graficoProdutosCusto"></canvas>
+      </div>
+    </section>
+
+    <!-- Painel Perfil -->
+    <section class="content-section" id="painel-perfil">
+      <div class="section-header">
+        <h1>Meu Perfil</h1>
+      </div>
+      <div class="form-card">
+        <form id="formPerfil" class="task-form">
+          <div class="form-group">
+            <label for="nomeUsuario">Nome *</label>
+            <input type="text" id="nomeUsuario" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="emailUsuario">Email *</label>
+            <input type="email" id="emailUsuario" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="senhaUsuario">Senha</label>
+            <input type="password" id="senhaUsuario" placeholder="Deixe em branco para não alterar"
+              autocomplete="current-password" />
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" type="submit">
+              <i data-lucide="save" class="btn-icon"></i>
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Painel Calendário -->
+    <section class="content-section" id="painel-calendario">
+      <div class="section-header">
+        <h1>Calendário de Tarefas & Anotações</h1>
+      </div>
+      <div id="calendario"></div>
     </section>
   </main>
 
-  <div id="modalConclusao" class="modal oculto">
-    <div class="modal-overlay"></div>
-    <div class="modal-box">
-      <p id="modal-conclusao-text"></p>
+  <!-- Modais -->
+  <div class="modal-overlay modal oculto" id="modalRecado">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Adicionar Recado</h3>
+      </div>
+      <div class="modal-body">
+        <p>Data: <span id="dataRecado"></span></p>
+        <textarea id="txtRecado" rows="4" placeholder="Digite seu recado..." required></textarea>
+      </div>
       <div class="modal-actions">
-        <button id="confirmarConclusao">Sim</button>
-        <button id="cancelarConclusao">Não</button>
+        <button class="btn-primary" id="salvarRecado">Salvar</button>
+        <button class="btn-secondary" id="cancelarRecado">Cancelar</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAIS PARA CRUD FINANCEIRO -->
-  <div id="modaisFinanceiros">
-    <!-- Modal LANCAMENTO -->
-    <div id="modalLancamento" class="modal oculto">
-      <div class="modal-overlay"></div> <!-- Adicionado modal-overlay -->
-      <div class="modal-box">
+  <div class="modal-overlay modal oculto" id="modalConfirmacao">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmação</h3>
+      </div>
+      <div class="modal-body">
+        <p id="modal-text"></p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="confirmarExcluir">Confirmar</button>
+        <button class="btn-secondary" id="cancelarExcluir">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay modal oculto" id="modalConclusao">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmar Conclusão</h3>
+      </div>
+      <div class="modal-body">
+        <p id="modal-conclusao-text"></p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="confirmarConclusao">Sim</button>
+        <button class="btn-secondary" id="cancelarConclusao">Não</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay modal oculto" id="modalDetalhesTarefa">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="detalhesTituloTarefa">Detalhes da Tarefa</h3>
+      </div>
+      <div class="modal-body">
+        <pre id="detalhesDescricaoTarefa"></pre>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="fecharDetalhesTarefa">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lançamento -->
+  <div class="modal-overlay modal oculto" id="modalLancamento">
+    <div class="modal-content">
+      <div class="modal-header">
         <h3 id="tituloModalLancamento">Novo Lançamento</h3>
-        <form id="formLancamento">
-          <input type="hidden" id="idLancamento">
-          <label>Descrição:<input type="text" id="descLancamento" required></label>
+      </div>
+      <form id="formLancamento" class="task-form">
+        <input type="hidden" id="idLancamento">
+        <div class="form-group">
+          <label>Título:
+            <input type="text" id="tituloLancamento" placeholder="Título do lançamento">
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Descrição:
+            <textarea id="descLancamento" rows="2" placeholder="Descrição do lançamento"></textarea>
+          </label>
+        </div>
+        <div class="form-group">
           <label>Valor:<input type="number" id="valorLancamento" required></label>
+        </div>
+        <div class="form-group">
           <label>Vencimento:<input type="date" id="vencimentoLancamento" required></label>
+        </div>
+        <div class="form-group">
           <label>Pagamento:<input type="date" id="pagamentoLancamento"></label>
+        </div>
+        <div class="form-group">
           <label>Status:
             <select id="statusLancamento" required>
               <option value="Em aberto">Em aberto</option>
@@ -365,95 +620,190 @@
               <option value="Vencido">Vencido</option>
             </select>
           </label>
+        </div>
+        <div class="form-group">
           <label>Classificação:
             <select id="classificacaoLancamento" required>
               <option value="Receita">Receita</option>
               <option value="Despesa">Despesa</option>
             </select>
           </label>
-          <label>Categoria:<input type="number" id="categoriaLancamento" required></label>
-          <label>Subcategoria:<input type="number" id="subcategoriaLancamento" required></label>
-          <div class="modal-actions">
-            <button type="submit">Salvar</button>
-            <button type="button" onclick="fecharModalLancamento()">Cancelar</button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div class="form-group">
+          <label>Categoria:
+            <select id="categoriaLancamento" required>
+              <option value="">Selecione uma categoria...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Subcategoria:
+            <select id="subcategoriaLancamento" required>
+              <option value="">Selecione uma subcategoria...</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" class="btn-secondary" onclick="fecharModalLancamento()">Cancelar</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <div id="modalExtrato" class="modal oculto">
-      <div class="modal-overlay"></div> <!-- Adicionado modal-overlay -->
-      <div class="modal-box">
+  <!-- Modal Extrato -->
+  <div class="modal-overlay modal oculto" id="modalExtrato">
+    <div class="modal-content">
+      <div class="modal-header">
         <h3 id="tituloModalExtrato">Novo Extrato</h3>
-        <form id="formExtrato">
-          <input type="hidden" id="idExtrato">
+      </div>
+      <div class="form-group">
+        <label>Título:
+          <input type="text" id="tituloExtrato" placeholder="Título do extrato">
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Descrição:
+          <textarea id="descricaoExtrato" rows="2" placeholder="Descrição do extrato"></textarea>
+        </label>
+      </div>
+      <form id="formExtrato" class="task-form">
+        <input type="hidden" id="idExtrato">
+        <div class="form-group">
           <label>Tipo:
             <select id="tipoExtrato" required>
               <option value="Entrada">Entrada</option>
               <option value="Saida">Saída</option>
             </select>
           </label>
+        </div>
+        <div class="form-group">
           <label>Valor:<input type="number" id="valorExtrato" required></label>
+        </div>
+        <div class="form-group">
           <label>Data:<input type="date" id="dataExtrato" required></label>
-          <label>ID Tarefa:<input type="number" id="idTarefaExtrato"></label>
-          <label>ID Lançamento:<input type="number" id="idLancamentoExtrato"></label>
-          <label>ID Categoria:<input type="number" id="idCategoriaExtrato" required></label>
-          <label>ID Subcategoria:<input type="number" id="idSubcategoriaExtrato" required></label>
-          <label>ID Produto:<input type="number" id="idProdutoExtrato" required></label>
-          <div class="modal-actions">
-            <button type="submit">Salvar</button>
-            <button type="button" onclick="fecharModalExtrato()">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div id="modalProduto" class="modal oculto">
-      <div class="modal-overlay"></div> <!-- Adicionado modal-overlay -->
-      <div class="modal-box">
-        <h3 id="tituloModalProduto">Novo Produto</h3>
-        <form id="formProduto">
-          <input type="hidden" id="idProduto">
-          <label>Nome:<input type="text" id="nomeProduto" required></label>
-          <label>Custo:<input type="number" id="custoProduto" required></label>
-          <label>ID Segmento:<input type="number" id="idSegmentoProduto" required></label>
-          <label>ID Subsegmento:<input type="number" id="idSubsegmentoProduto" required></label>
-          <div class="modal-actions">
-            <button type="submit">Salvar</button>
-            <button type="button" onclick="fecharModalProduto()">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div id="modalIndice" class="modal oculto">
-      <div class="modal-overlay"></div> <!-- Adicionado modal-overlay -->
-      <div class="modal-box">
-        <h3 id="tituloModalIndice">Novo Índice</h3>
-        <form id="formIndice">
-          <input type="hidden" id="idIndice">
-          <label>Nome:<input type="text" id="nomeIndice" required></label>
-          <label>Taxa:<input type="number" id="taxaIndice" required></label>
-          <label>Ano:<input type="number" id="anoIndice" required></label>
-          <label>ID Subsegmento:<input type="number" id="idSubsegmentoIndice" required></label>
-          <div class="modal-actions">
-            <button type="submit">Salvar</button>
-            <button type="button" onclick="fecharModalIndice()">Cancelar</button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div class="form-group">
+          <label>Tarefa:
+            <select id="idTarefaExtrato">
+              <option value="">Selecione uma tarefa...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Lançamento:
+            <select id="idLancamentoExtrato">
+              <option value="">Selecione um lançamento...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Categoria:
+            <select id="idCategoriaExtrato" required>
+              <option value="">Selecione uma categoria...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Subcategoria:
+            <select id="idSubcategoriaExtrato" required>
+              <option value="">Selecione uma subcategoria...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Produto *
+            <select id="idProdutoExtrato" required>
+              <option value="">Selecione um produto...</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" class="btn-secondary" onclick="fecharModalExtrato()">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Scripts para Chart.js, Flatpickr e FullCalendar -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+  <!-- Modal Produto -->
+  <div class="modal-overlay modal oculto" id="modalProduto">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tituloModalProduto">Novo Produto</h3>
+      </div>
+      <form id="formProduto" class="task-form">
+        <input type="hidden" id="idProduto">
+        <div class="form-group">
+          <label>Nome:<input type="text" id="nomeProduto" required></label>
+        </div>
+        <div class="form-group">
+          <label>Custo:<input type="number" id="custoProduto" required></label>
+        </div>
+        <div class="form-group">
+          <label>Segmento:
+            <select id="idSegmentoProduto" required>
+              <option value="">Selecione um segmento...</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Subsegmento:
+            <select id="idSubsegmentoProduto" required>
+              <option value="">Selecione um subsegmento...</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" class="btn-secondary" onclick="fecharModalProduto()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Índice -->
+  <div class="modal-overlay modal oculto" id="modalIndice">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tituloModalIndice">Novo Índice</h3>
+      </div>
+      <form id="formIndice" class="task-form">
+        <input type="hidden" id="idIndice">
+        <div class="form-group">
+          <label>Nome:<input type="text" id="nomeIndice" required></label>
+        </div>
+        <div class="form-group">
+          <label>Taxa:<input type="number" id="taxaIndice" required></label>
+        </div>
+        <div class="form-group">
+          <label>Ano:<input type="number" id="anoIndice" required></label>
+        </div>
+        <!-- SUBSTITUIR o input por select -->
+        <div class="form-group">
+          <label>Subsegmento:
+            <select id="idSubsegmentoIndice" required>
+              <option value="">Selecione um subsegmento...</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" class="btn-secondary" onclick="fecharModalIndice()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resposta Popup -->
+  <div id="divResposta" class="resposta-popup"></div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/list@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.8/index.global.min.js"></script>
   <script src="../../javascript/funcionarioFinanceiroFunctions/dashboardFuncionarioFinanceiro.js"></script>
+
 </body>
 
-</html>
+</html

@@ -85,18 +85,6 @@ module.exports = class TarefaMiddleware {
         next();
     }
 
-    validar_valorOpcional = (request, response, next) => {
-        const valor = request.body.valorOpc;
-
-        if (valor !== undefined && isNaN(valor)) {
-            return response.status(400).send({
-                status: false,
-                error: 'O valor opcional deve ser numérico'
-            });
-        }
-
-        next();
-    }
 
     validar_descricaoTarefa = (request, response, next) => {
         const descricao = request.body.descricaoTarefa;

@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -9,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Painel Gerente - Sistema de Tarefas</title>
     <meta name="description" content="Painel administrativo moderno para gerenciamento de tarefas e equipes" />
-    
-    <!-- Ícones Lucide (apenas uma instância) -->
+
+    <!-- Ícones Lucide -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    
+
     <!-- FullCalendar CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" />
-    
+
     <!-- CSS personalizado -->
     <link rel="stylesheet" href="../../css/gerentecss/gerente.css" />
 </head>
@@ -57,8 +54,13 @@
         <section class="content-section active" id="painel-tarefas">
             <div class="section-header">
                 <h1>Tarefas</h1>
-                <button class="btn-primary" id="btnNovaTarefa">Nova Tarefa</button>
+                <button class="btn-primary" id="btnNovaTarefa">
+                    <i data-lucide="plus" class="btn-icon"></i>
+                    Nova Tarefa
+                </button>
             </div>
+
+            <!-- Cards de Resumo -->
             <div class="stats-grid cards-resumo">
                 <div class="stats-card total card-box">
                     <div class="stats-text">
@@ -85,6 +87,38 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Painel de Filtros de Tarefas -->
+            <div class="filters-panel">
+                <div class="filters-header">
+                    <h3>
+                        <i data-lucide="filter" class="filter-icon"></i>
+                        Filtros
+                    </h3>
+                    <button class="btn-clear-filters" id="btnLimparFiltrosTarefas">
+                        <i data-lucide="x" class="btn-icon"></i>
+                        Limpar Filtros
+                    </button>
+                </div>
+
+                <div class="filter-selector">
+                    <label>
+                        <i data-lucide="settings-2" class="input-icon"></i>
+                        Adicionar Filtro
+                    </label>
+                    <select id="seletorFiltroTarefas" class="filter-type-select">
+                        <option value="">Selecione um filtro...</option>
+                        <option value="busca">🔍 Buscar</option>
+                        <option value="prioridade">🚩 Prioridade</option>
+                        <option value="data">📅 Data</option>
+                        <option value="ordenar">↕️ Ordenar</option>
+                    </select>
+                </div>
+
+                <div id="filtrosAtivosTarefas" class="active-filters"></div>
+            </div>
+
+            <!-- Tabela de Tarefas -->
             <div class="table-container">
                 <table class="task-table tabela" id="tabelaTarefas">
                     <thead>
@@ -95,37 +129,78 @@
                             <th>Prioridade</th>
                             <th>Início</th>
                             <th>Fim</th>
-                            <th>Valor</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
-                </table></div>
-                </div><div class="empty-state" id="emptyState" style="display: none;">
-                    <p>Nenhuma tarefa encontrada</p>
-                </div>
+                </table>
+            </div>
+            <div class="empty-state" id="emptyStateTarefas" style="display: none;">
+                <p>Nenhuma tarefa encontrada com os filtros aplicados</p>
             </div>
             <div class="resposta" id="respostaTarefas"></div>
         </section>
 
         <!-- Painel Atribuições -->
         <section class="content-section" id="painel-atribuicoes">
-            <h1>Atribuições</h1>
-            <button class="btn-primary" id="btnNovaAtribuicao">Nova Atribuição</button>
+            <div class="section-header">
+                <h1>Atribuições</h1>
+                <button class="btn-primary" id="btnNovaAtribuicao">
+                    <i data-lucide="plus" class="btn-icon"></i>
+                    Nova Atribuição
+                </button>
+            </div>
+
+            <!-- Painel de Filtros de Atribuições -->
+            <div class="filters-panel">
+                <div class="filters-header">
+                    <h3>
+                        <i data-lucide="filter" class="filter-icon"></i>
+                        Filtros
+                    </h3>
+                    <button class="btn-clear-filters" id="btnLimparFiltrosAtribuicoes">
+                        <i data-lucide="x" class="btn-icon"></i>
+                        Limpar Filtros
+                    </button>
+                </div>
+
+                <div class="filter-selector">
+                    <label>
+                        <i data-lucide="settings-2" class="input-icon"></i>
+                        Adicionar Filtro
+                    </label>
+                    <select id="seletorFiltroAtribuicoes" class="filter-type-select">
+                        <option value="">Selecione um filtro...</option>
+                        <option value="busca">🔍 Buscar</option>
+                        <option value="usuario">👤 Usuário</option>
+                        <option value="tarefa">📋 Tarefa</option>
+                        <option value="status">✅ Status</option>
+                        <option value="ordenar">↕️ Ordenar</option>
+                    </select>
+                </div>
+
+                <div id="filtrosAtivosAtribuicoes" class="active-filters"></div>
+            </div>
+
+            <!-- Tabela de Atribuições -->
             <div class="resposta" id="respostaAtribuicoes"></div>
             <div class="table-container">
-<div class="table-container"><table class="task-table tabela" class="tabela" id="tabelaAtribuicoes">
-                <thead>
-                    <tr>
-                        <th>Usuário</th>
-                        <th>Tarefa</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table></div>
-        </div></section>
+                <table class="task-table tabela" id="tabelaAtribuicoes">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Tarefa</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="emptyStateAtribuicoes" style="display: none;">
+                <p>Nenhuma atribuição encontrada com os filtros aplicados</p>
+            </div>
+        </section>
 
         <!-- Painel Calendário -->
         <section class="content-section" id="painel-calendario">
@@ -135,6 +210,7 @@
     </main>
 
     <!-- Modais -->
+    <!-- Modal Recado -->
     <div class="modal-overlay modal oculto" id="modalRecado">
         <div class="modal-content">
             <div class="modal-header">
@@ -151,6 +227,7 @@
         </div>
     </div>
 
+    <!-- Modal Confirmação -->
     <div class="modal-overlay modal oculto" id="modalConfirmacao">
         <div class="modal-content">
             <div class="modal-header">
@@ -166,6 +243,7 @@
         </div>
     </div>
 
+    <!-- Modal Detalhes Tarefa -->
     <div class="modal-overlay modal oculto" id="modalDetalhesTarefa">
         <div class="modal-content">
             <div class="modal-header">
@@ -180,6 +258,7 @@
         </div>
     </div>
 
+    <!-- Modal Tarefa -->
     <div class="modal-overlay modal oculto" id="modalTarefa">
         <div class="modal-content">
             <div class="modal-header">
@@ -213,10 +292,6 @@
                         <input id="inputDataFim" type="date" required />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="inputValorOpc">Valor (R$)</label>
-                    <input id="inputValorOpc" type="number" min="0" step="0.01" value="0" />
-                </div>
                 <div class="modal-actions">
                     <button class="btn-primary" type="submit">Salvar</button>
                     <button class="btn-secondary" id="btnCancelarTarefa" type="button">Cancelar</button>
@@ -226,6 +301,7 @@
         </div>
     </div>
 
+    <!-- Modal Atribuição -->
     <div class="modal-overlay modal oculto" id="modalAtribuicao">
         <div class="modal-content">
             <div class="modal-header">
@@ -256,6 +332,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Resposta Popup -->
+    <div id="divResposta" class="resposta-popup"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>

@@ -19,7 +19,6 @@ module.exports = class TarefaRoutes {
             this._tarefaMiddleware.validar_descricaoTarefa,
             this._tarefaMiddleware.validar_prioridadeTarefa,  // novo
             this._tarefaMiddleware.validar_datas,
-            this._tarefaMiddleware.validar_valorOpcional,
             this._tarefaController.Tarefa_create_controller
         );
 
@@ -39,7 +38,6 @@ module.exports = class TarefaRoutes {
             this._tarefaMiddleware.validar_descricaoTarefa,
             this._tarefaMiddleware.validar_prioridadeTarefa,  // novo
             this._tarefaMiddleware.validar_datas,
-            this._tarefaMiddleware.validar_valorOpcional,
             this._tarefaController.Tarefa_update_controller
         );
 

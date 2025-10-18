@@ -3,6 +3,8 @@ const Banco = require('./Banco');
 module.exports = class Extrato {
     constructor() {
         this._idExtrato = null;
+        this._tituloExtrato = null;
+        this._descricaoExtrato = null;
         this._tipoExtrato = null;
         this._valorExtrato = null;
         this._dataExtrato = null;
@@ -11,16 +13,20 @@ module.exports = class Extrato {
         this._idCategoria = null;
         this._idSubcategoria = null;
         this._idProduto = null;
+
+
     }
 
     // CREATE
     async create() {
         const query = `
             INSERT INTO extratos 
-                (tipoExtrato, valorExtrato, dataExtrato, idTarefa, idLancamento, idCategoria, idSubcategoria, idProduto) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (tituloExtrato, descricaoExtrato, tipoExtrato, valorExtrato, dataExtrato, idTarefa, idLancamento, idCategoria, idSubcategoria, idProduto)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const values = [
+            this.tituloExtrato,
+            this.descricaoExtrato,
             this.tipoExtrato,
             this.valorExtrato,
             this.dataExtrato,
@@ -30,7 +36,8 @@ module.exports = class Extrato {
             this.idSubcategoria,
             this.idProduto
         ];
-        
+
+
         try {
             const conexao = Banco.getConexao();
             const [resposta] = await conexao.promise().execute(query, values);
@@ -71,18 +78,22 @@ module.exports = class Extrato {
     // UPDATE
     async update() {
         const query = `
-            UPDATE extratos 
-               SET tipoExtrato = ?, 
-                   valorExtrato = ?, 
-                   dataExtrato = ?,
-                   idTarefa = ?,
-                   idLancamento = ?,
-                   idCategoria = ?,
-                   idSubcategoria = ?,
-                   idProduto = ?
+            UPDATE extratos SET 
+                tituloExtrato = ?,
+                descricaoExtrato = ?,
+                tipoExtrato = ?, 
+                valorExtrato = ?, 
+                dataExtrato = ?,
+                idTarefa = ?,
+                idLancamento = ?,
+                idCategoria = ?,
+                idSubcategoria = ?,
+                idProduto = ?
              WHERE idExtrato = ?
         `;
         const values = [
+            this.tituloExtrato,
+            this.descricaoExtrato,
             this.tipoExtrato,
             this.valorExtrato,
             this.dataExtrato,
@@ -93,7 +104,8 @@ module.exports = class Extrato {
             this.idProduto,
             this.idExtrato
         ];
-        
+
+
         try {
             const conexao = Banco.getConexao();
             const [resposta] = await conexao.promise().execute(query, values);
@@ -144,4 +156,11 @@ module.exports = class Extrato {
 
     get idProduto() { return this._idProduto; }
     set idProduto(val) { this._idProduto = val; }
+
+    get tituloExtrato() { return this._tituloExtrato; }
+    set tituloExtrato(val) { this._tituloExtrato = val; }
+
+    get descricaoExtrato() { return this._descricaoExtrato; }
+    set descricaoExtrato(val) { this._descricaoExtrato = val; }
+
 };

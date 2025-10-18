@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Administrador</title>
+    <link rel="stylesheet" href="../../css/admincss/admin.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="top">
+                <div class="user-info">
+                    <div class="avatar">AD</div>
+                    <div>
+                        <div class="name brand-text">Admin</div>
+                        <div class="role brand-text">Administrador</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <div class="nav-item active" data-section="overview">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M4 22h16v-2H4V4H2v18c0 1.1.9 2 2 2zm18-6h-6v-4h6v4zm0-6h-6V6h6v4zM8 14h6v-4H8v4zm0-6h6V6H8v2z" />
+                        </svg>
+                    </div>
+                    <span class="text">Visão Geral</span>
+                </div>
+                <div class="nav-item" data-section="usuarios">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v3h8v-3c0-1.66 1.34-3 3-3s3 1.34 3 3v3h8v-3c0-2.66-5.33-4-8-4H8z" />
+                        </svg>
+                    </div>
+                    <span class="text">Usuários</span>
+                </div>
+                <div class="nav-item" data-section="cargos">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M14 6V4h-4v2H2v14h20V6h-8zM4 8h16v2H4V8zm0 4h16v6H4v-6z" />
+                        </svg>
+                    </div>
+                    <span class="text">Cargos</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="menu-button logout-button" id="btnLogout">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                        </svg>
+                    </div>
+                    <span class="text">Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="brand">
+                <div class="logo">A</div>
+                <div class="title brand-text">
+                    <div class="name h2">Admin Panel</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="btnRefresh" class="btn ghost" title="Atualizar dados" aria-label="Atualizar dados">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a6.004 6.004 0 0 1-11.55-2c0-3.31 2.69-6 6-6 1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                    </svg>
+                </button>
+                <div class="stat-pill">
+                    <div class="dot"></div>
+                    <span>Sistema Online</span>
+                </div>
+                <div class="avatar">AD</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main" id="mainContent">
+            <!-- Feedback global -->
+            <div id="divResposta" class="divResposta"></div>
+
+            <!-- OVERVIEW SECTION -->
+            <section id="overview">
+                <div class="page-head">
+                    <div class="title">
+                        <h1 class="h1">Visão Geral</h1>
+                        <p class="lead">Métricas e estatísticas do sistema</p>
+                    </div>
+                </div>
+
+                <div class="overview-widgets">
+                    <!-- Card: Total Usuários -->
+                    <div class="card small">
+                        <div>
+                            <div class="card-title">Total de Usuários</div>
+                            <div class="card-value" id="countUsuarios">0</div>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v3h8v-3c0-1.66 1.34-3 3-3s3 1.34 3 3v3h8v-3c0-2.66-5.33-4-8-4H8z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Card: Total Cargos -->
+                    <div class="card small">
+                        <div>
+                            <div class="card-title">Total de Cargos</div>
+                            <div class="card-value" id="countCargos">0</div>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path d="M14 6V4h-4v2H2v14h20V6h-8zM4 8h16v2H4V8zm0 4h16v6H4v-6z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Card: Atividade Recente -->
+                    <div class="card small">
+                        <div>
+                            <div class="card-title">Logins Hoje</div>
+                            <div class="card-value">12</div>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M12 17a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v6h16v-6a2 2 0 0 0-2-2zm-2 0H8V9a4 4 0 1 1 8 0v2z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Card: Sistema -->
+                    <div class="card small">
+                        <div>
+                            <div class="card-title">Status</div>
+                            <div class="card-value" style="font-size: 1.2rem; color: var(--success);">OK</div>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path d="M9 16.17l-3.59-3.58L4 14l5 5 12-12-1.41-1.42z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE USUÁRIOS -->
+            <section id="usuarios" class="oculto">
+                <div class="section-header">
+                    <h1>Gerenciar Usuários</h1>
+                    <button class="btn-primary" data-action="create-user">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                        Criar Usuário
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-panel">
+                    <div class="filters-header">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+                            </svg>
+                            Filtros
+                        </h3>
+                        <button class="btn-clear-filters" id="btnLimparFiltrosUsuarios">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                            </svg>
+                            Limpar Filtros
+                        </button>
+                    </div>
+
+                    <div class="filter-selector">
+                        <label>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
+                            </svg>
+                            Adicionar Filtro
+                        </label>
+                        <select id="seletorFiltroUsuarios" class="filter-type-select">
+                            <option value="">Selecione um filtro...</option>
+                            <option value="busca">🔍 Buscar</option>
+                            <option value="cargo">💼 Cargo</option>
+                            <option value="ordenar">↕️ Ordenar</option>
+                        </select>
+                    </div>
+
+                    <div id="filtrosAtivosUsuarios" class="active-filters"></div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Data Cadastro</th>
+                                <th>Cargo</th>
+                                <th class="center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaUsuarios">
+                            <tr>
+                                <td colspan="5">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE CARGOS -->
+            <section id="cargos" class="oculto">
+                <div class="section-header">
+                    <h1>Gerenciar Cargos</h1>
+                    <button class="btn-primary" data-action="create-cargo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                        Criar Cargo
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-panel">
+                    <div class="filters-header">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+                            </svg>
+                            Filtros
+                        </h3>
+                        <button class="btn-clear-filters" id="btnLimparFiltrosCargos">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                            </svg>
+                            Limpar Filtros
+                        </button>
+                    </div>
+
+                    <div class="filter-selector">
+                        <label>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
+                            </svg>
+                            Adicionar Filtro
+                        </label>
+                        <select id="seletorFiltroCargos" class="filter-type-select">
+                            <option value="">Selecione um filtro...</option>
+                            <option value="busca">🔍 Buscar</option>
+                            <option value="ordenar">↕️ Ordenar</option>
+                        </select>
+                    </div>
+
+                    <div id="filtrosAtivosCargos" class="active-filters"></div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Prioridade</th>
+                                <th class="center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCargos">
+                            <tr>
+                                <td colspan="3">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: CRIAR USUÁRIO -->
+    <div id="modalCriarUsuario" class="modal">
+        <div class="backdrop"></div>
+        <div class="dialog">
+            <header>
+                <h2 class="h2">Criar Novo Usuário</h2>
+                <button class="close" data-dismiss="modal" aria-label="Fechar modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                    </svg>
+                </button>
+            </header>
+            <div class="content">
+                <form id="formCriarUsuario" class="form">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="criarNome">Nome Completo</label>
+                            <input type="text" id="criarNome" class="input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="criarEmail">Email</label>
+                            <input type="email" id="criarEmail" class="input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="criarSenha">Senha</label>
+                            <input type="password" id="criarSenha" class="input" required minlength="6">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="criarCargo">Cargo</label>
+                            <select id="criarCargo" class="input">
+                                <option value="">-- selecione --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row" style="justify-content: flex-end; gap: .5rem;">
+                        <button type="button" class="btn ghost" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn primary">Criar Usuário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR USUÁRIO -->
+    <div id="modalEditarUsuario" class="modal">
+        <div class="backdrop"></div>
+        <div class="dialog">
+            <header>
+                <h2 class="h2">Editar Usuário</h2>
+                <button class="close" data-dismiss="modal" aria-label="Fechar modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                    </svg>
+                </button>
+            </header>
+            <div class="content">
+                <form id="formEditarUsuario" class="form">
+                    <input type="hidden" id="editarUsuarioId">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarNome">Nome Completo</label>
+                            <input type="text" id="editarNome" class="input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarEmail">Email</label>
+                            <input type="email" id="editarEmail" class="input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarSenha">Nova Senha (deixe vazio para não alterar)</label>
+                            <input type="password" id="editarSenha" class="input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarCargo">Cargo</label>
+                            <select id="editarCargo" class="input">
+                                <option value="">-- selecione --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row" style="justify-content: flex-end; gap: .5rem;">
+                        <button type="button" class="btn ghost" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn primary">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR/CRIAR CARGO -->
+    <div id="modalEditarCargo" class="modal">
+        <div class="backdrop"></div>
+        <div class="dialog">
+            <header>
+                <h2 class="h2">Gerenciar Cargo</h2>
+                <button class="close" data-dismiss="modal" aria-label="Fechar modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                    </svg>
+                </button>
+            </header>
+            <div class="content">
+                <form id="formEditarCargo" class="form">
+                    <input type="hidden" id="editarCargoId">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarNomeCargo">Nome do Cargo</label>
+                            <input type="text" id="editarNomeCargo" class="input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="editarPrioridadeCargo">Prioridade</label>
+                            <input type="number" id="editarPrioridadeCargo" class="input" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row" style="justify-content: flex-end; gap: .5rem;">
+                        <button type="button" class="btn ghost" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRMAR EXCLUSÃO -->
+    <div id="modalConfirmarExclusao" class="modal">
+        <div class="backdrop"></div>
+        <div class="dialog dialog-small">
+            <header>
+                <h2 class="h2">Confirmar Exclusão</h2>
+                <button class="close" data-dismiss="modal" aria-label="Fechar modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M18.3 5.71L12 12l6.3 6.29-1.42 1.42L12 13.41l-6.29 6.3-1.42-1.42L10.59 12 4.29 5.71 5.71 4.29 12 10.59l6.29-6.3z" />
+                    </svg>
+                </button>
+            </header>
+            <div class="content">
+                <div class="confirm-content">
+                    <div class="confirm-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                        </svg>
+                    </div>
+                    <p id="confirmarExclusaoTexto" class="confirm-text"></p>
+                </div>
+                <div class="form-row" style="justify-content: flex-end; gap: .5rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn ghost" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn destructive" id="btnConfirmarExclusao">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: REDIRECIONAMENTO DE LOGOUT -->
+    <div id="modalRedirecionamento" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <div class="modal-header">
+                <h3>Saindo do Sistema</h3>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <div style="margin-bottom: 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                        viewBox="0 0 24 24" style="color: var(--primary); margin: 0 auto; display: block;">
+                        <path
+                            d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; color: var(--foreground); margin-bottom: 0.5rem;">
+                    Logout realizado com sucesso!
+                </p>
+                <p style="font-size: 0.875rem; color: var(--muted-foreground);">
+                    Redirecionando para a página de login...
+                </p>
+                <div style="margin-top: 1.5rem;">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="../../javascript/adminFunctions/adm.js"></script>
+</body>
+
+</html>

@@ -8,13 +8,12 @@ module.exports = class Tarefa {
         this._prioridadeTarefa = null;  // novo
         this._dataInicio = null;
         this._dataFim = null;
-        this._valorOpc = null;
     }
 
     async create() {
         const query = `
-            INSERT INTO tarefas (tituloTarefa, descricaoTarefa, prioridadeTarefa, dataInicio, dataFim, valorOpc)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO tarefas (tituloTarefa, descricaoTarefa, prioridadeTarefa, dataInicio, dataFim)
+            VALUES (?, ?, ?, ?, ?)
         `;
         try {
             const conexao = Banco.getConexao();
@@ -24,7 +23,7 @@ module.exports = class Tarefa {
                 this.prioridadeTarefa,  // novo
                 this.dataInicio,
                 this.dataFim,
-                this.valorOpc
+        
             ];
             const [resposta] = await conexao.promise().execute(query, values);
             this._idTarefa = resposta.insertId;
@@ -62,7 +61,7 @@ module.exports = class Tarefa {
     async update() {
         const query = `
             UPDATE tarefas
-            SET tituloTarefa = ?, descricaoTarefa = ?, prioridadeTarefa = ?, dataInicio = ?, dataFim = ?, valorOpc = ?
+            SET tituloTarefa = ?, descricaoTarefa = ?, prioridadeTarefa = ?, dataInicio = ?, dataFim = ?, 
             WHERE idTarefa = ?
         `;
         try {
@@ -73,7 +72,6 @@ module.exports = class Tarefa {
                 this.prioridadeTarefa,  // novo
                 this.dataInicio,
                 this.dataFim,
-                this.valorOpc,
                 this.idTarefa
             ];
             const [resposta] = await conexao.promise().execute(query, values);
@@ -138,10 +136,4 @@ module.exports = class Tarefa {
         this._dataFim = dataFim;
     }
 
-    get valorOpc() {
-        return this._valorOpc;
-    }
-    set valorOpc(valorOpc) {
-        this._valorOpc = valorOpc;
-    }
 };

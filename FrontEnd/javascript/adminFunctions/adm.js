@@ -1,69 +1,251 @@
-
-
 const API_BASE = "http://localhost:3000";
 
 (function () {
     "use strict";
 
-    document.addEventListener("DOMContentLoaded", () => {
-        /* Elementos Globais */
-        const navItems = document.querySelectorAll(".nav .nav-item");
-        const btnRefresh = document.getElementById("btnRefresh");
+    /* ---------- VARIÁVEIS GLOBAIS ---------- */
+    let timerInatividade;
+    const TEMPO_INATIVIDADE = 30 * 60 * 1000; // 30 minutos
+    let divResposta = null;
 
-        // Modais / forms (refs reconsultadas quando necessário)
-        let modalCriarUsuario = document.getElementById("modalCriarUsuario");
-        let modalEditarUsuario = document.getElementById("modalEditarUsuario");
-        let modalEditarCargo = document.getElementById("modalEditarCargo");
-        const btnCreateUserHeader = document.getElementById("btnCreateUserHeader");
-
-        // Feedback
-        const divResposta = document.getElementById("divResposta");
-        const toastContainer = document.getElementById("toastContainer");
-
-        // counters (these exist in overview)
-        const countUsuarios = document.getElementById("countUsuarios");
-        const countCargos = document.getElementById("countCargos");
-
-        // references to table bodies (will be updated after moving cards)
-        let tabelaUsuariosBody = document.querySelector("#tabelaUsuarios tbody");
-        let tabelaCargosBody = document.querySelector("#tabelaCargos tbody");
-        let usuariosCard = null;
-        let cargosCard = null;
-
-        let cargosCache = [];
-        let usuariosCache = [];
-
-        /* ---------- Helpers ---------- */
-        function showMessage(msg, sucesso = true, timeout = 4000) {
+    /* ---------- FUNÇÃO SHOWMESSAGE (DEFINIDA NO TOPO) ---------- */
+    function showMessage(msg, sucesso = true, timeout = 4000) {
+        if (!divResposta) {
+            divResposta = document.getElementById("divResposta");
             if (!divResposta) {
                 if (sucesso) console.log("OK:", msg);
                 else console.error("ERRO:", msg);
                 return;
             }
-            divResposta.innerText = msg;
+        }
+        divResposta.innerText = msg;
+        divResposta.classList.remove("sucesso", "erro");
+        divResposta.classList.add(sucesso ? "sucesso" : "erro");
+        divResposta.style.display = "block";
+        setTimeout(() => {
+            divResposta.style.display = "none";
             divResposta.classList.remove("sucesso", "erro");
-            divResposta.classList.add(sucesso ? "sucesso" : "erro");
-            divResposta.style.display = "block";
+        }, timeout);
+    }
+
+    /* ---------- SISTEMA DE LOGOUT SEGURO ---------- */
+    /**
+     * Realiza logout completo e seguro
+     * Remove todos os dados de autenticação e redireciona
+     */
+    function realizarLogoutSeguro() {
+        try {
+            // Mostrar modal de redirecionamento
+            mostrarModalRedirecionamento();
+
             setTimeout(() => {
-                divResposta.style.display = "none";
-                divResposta.classList.remove("sucesso", "erro");
-            }, timeout);
+                // Limpar authToken principal
+                localStorage.removeItem("authToken");
+
+                // Limpar sessionStorage
+                sessionStorage.clear();
+
+                // Limpar outros dados sensíveis
+                const chavesParaRemover = [
+                    "userData",
+                    "userRole",
+                    "lastActivity",
+                    "sessionId",
+                    "refreshToken",
+                    "permissions",
+                    "eventosGerente",
+                    "eventosAdmin",
+                    "tarefaFixada"
+                ];
+
+                chavesParaRemover.forEach(chave => {
+                    if (localStorage.getItem(chave)) {
+                        localStorage.removeItem(chave);
+                    }
+                });
+
+                // Log para auditoria
+                console.log(`[${new Date().toISOString()}] Logout realizado pelo administrador`);
+
+                // Redirecionar usando replace para evitar histórico
+                setTimeout(() => {
+                    window.location.replace("../../html/login.html");
+                }, 1500);
+
+            }, 500);
+
+        } catch (erro) {
+            console.error("Erro durante logout:", erro);
+
+            // Fallback: limpar tudo e redirecionar mesmo com erro
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch (e) {
+                console.error("Erro crítico ao limpar storage:", e);
+            }
+
+            setTimeout(() => {
+                window.location.replace("../../html/login.html");
+            }, 1000);
+        }
+    }
+
+    function mostrarModalRedirecionamento() {
+        // Buscar o modal
+        const modal = document.getElementById('modalRedirecionamento');
+
+        if (!modal) {
+            console.error("Modal de redirecionamento não encontrado!");
+            return;
+        }
+
+        // Fechar todos os outros modais primeiro
+        const modaisParaFechar = ["modalCriarUsuario", "modalEditarUsuario", "modalEditarCargo", "modalConfirmarExclusao"];
+        modaisParaFechar.forEach(id => {
+            const m = document.getElementById(id);
+            if (m) m.classList.remove("active");
+        });
+
+        // Mostrar modal de redirecionamento
+        modal.style.display = 'flex';
+    }
+
+    function resetarTimerInatividade() {
+        if (timerInatividade) clearTimeout(timerInatividade);
+
+        timerInatividade = setTimeout(() => {
+            showMessage("Sua sessão expirou por inatividade.", false, 3000);
+            setTimeout(() => {
+                realizarLogoutSeguro();
+            }, 2000);
+        }, TEMPO_INATIVIDADE);
+    }
+
+    function iniciarMonitoramentoInatividade() {
+        const eventos = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+
+        eventos.forEach(evento => {
+            document.addEventListener(evento, resetarTimerInatividade, true);
+        });
+
+        resetarTimerInatividade();
+    }
+
+    function iniciarVerificacaoToken() {
+        setInterval(() => {
+            const token = pegarToken();
+
+            if (!token) {
+                showMessage("Sessão expirada. Por favor, faça login novamente.", false, 3000);
+                setTimeout(() => {
+                    window.location.replace("../../html/login.html");
+                }, 2000);
+            }
+        }, 5 * 60 * 1000);
+    }
+
+    // Detectar quando a página volta a ficar visível
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            const token = pegarToken();
+
+            if (!token) {
+                showMessage("Sua sessão expirou.", false);
+                setTimeout(() => {
+                    window.location.replace("../../html/login.html");
+                }, 2000);
+            }
+        }
+    });
+
+    /* ---------- FIM DO SISTEMA DE LOGOUT SEGURO ---------- */
+
+    document.addEventListener("DOMContentLoaded", () => {
+        /* Elementos Globais */
+        const navItems = document.querySelectorAll(".nav .nav-item");
+        const btnRefresh = document.getElementById("btnRefresh");
+        divResposta = document.getElementById("divResposta");
+        const countUsuarios = document.getElementById("countUsuarios");
+        const countCargos = document.getElementById("countCargos");
+
+        let tabelaUsuariosBody = document.querySelector("#tabelaUsuarios");
+        let tabelaCargosBody = document.querySelector("#tabelaCargos");
+
+        let cargosCache = [];
+        let usuariosCache = [];
+
+        // Sistema de filtros
+        let filtrosAtivos = {
+            usuarios: {},
+            cargos: {}
+        };
+
+        // Modal de confirmação
+        let confirmarExclusaoCallback = null;
+
+        /* ---------- Helpers ---------- */
+        function pegarToken() {
+            const authData = localStorage.getItem("authToken");
+
+            if (!authData) return null;
+
+            try {
+                const { token, timestamp } = JSON.parse(authData);
+
+                // Verificar se o token expirou (24 horas)
+                const tempoDecorrido = Date.now() - timestamp;
+                const TEMPO_EXPIRACAO = 24 * 60 * 60 * 1000;
+
+                if (tempoDecorrido >= TEMPO_EXPIRACAO) {
+                    localStorage.removeItem("authToken");
+                    return null;
+                }
+
+                const tokenLimpo = token.trim().replace(/^"|"$/g, "");
+
+                if (!tokenLimpo || tokenLimpo === "null" || tokenLimpo === "undefined" || tokenLimpo.length < 20) {
+                    return null;
+                }
+
+                return tokenLimpo;
+            } catch (e) {
+                console.error("Erro ao processar authToken:", e);
+                localStorage.removeItem("authToken");
+                return null;
+            }
         }
 
         function apiFetch(path, options = {}) {
-            const token = localStorage.getItem("token");
+            const token = pegarToken();
+
+            if (!token) {
+                showMessage("Sessão expirada. Faça login novamente.", false);
+                setTimeout(() => {
+                    window.location.href = "../../html/login.html";
+                }, 2000);
+                return Promise.reject(new Error("Token não encontrado"));
+            }
+
             const headers = options.headers || {};
             headers["Accept"] = "application/json";
             if (options.body) headers["Content-Type"] = "application/json";
-            if (token) headers["Authorization"] = `Bearer ${token}`;
+            headers["Authorization"] = `Bearer ${token}`;
             options.headers = headers;
 
             return fetch(`${API_BASE}${path}`, options)
                 .then(async (resp) => {
                     const data = await resp.json().catch(() => null);
-                    if (resp.status === 401) {
-                        showMessage("Token inválido ou expirado. Faça login novamente.", false);
+
+                    if (resp.status === 401 || resp.status === 403) {
+                        showMessage("Sessão inválida ou expirada. Redirecionando...", false);
+                        localStorage.removeItem("authToken");
+                        setTimeout(() => {
+                            window.location.href = "../../html/login.html";
+                        }, 2000);
+                        throw new Error("Sessão expirada");
                     }
+
                     return { ok: resp.ok, status: resp.status, data, raw: resp };
                 })
                 .catch((err) => {
@@ -85,7 +267,15 @@ const API_BASE = "http://localhost:3000";
             return cargo ? cargo.nomeCargo : "-";
         }
 
-        /* ---------- Modal utilities (CORREÇÃO PRINCIPAL) ---------- */
+        function normalizar(txt) {
+            return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        /* ---------- Modal utilities ---------- */
         function getModal(idOrEl) {
             if (!idOrEl) return null;
             if (typeof idOrEl === "string") return document.getElementById(idOrEl);
@@ -95,10 +285,8 @@ const API_BASE = "http://localhost:3000";
         function showModal(modalElement) {
             const m = getModal(modalElement);
             if (!m) return;
-            // Remove any "oculto" (usado para sections) só por segurança e adicionar a classe ativa do modal
             m.classList.remove("oculto");
             m.classList.add("active");
-            // foco no primeiro campo
             const first = m.querySelector("input, select, textarea, button");
             if (first) first.focus();
         }
@@ -107,12 +295,10 @@ const API_BASE = "http://localhost:3000";
             const m = getModal(modalElement);
             if (!m) return;
             m.classList.remove("active");
-            // não forçar .oculto aqui — sections usam .oculto globalmente
         }
 
         function garantirModaisFechados() {
-            // Garante que nenhum modal esteja com a classe .active ao iniciar
-            ["modalCriarUsuario", "modalEditarUsuario", "modalEditarCargo"].forEach(id => {
+            ["modalCriarUsuario", "modalEditarUsuario", "modalEditarCargo", "modalConfirmarExclusao"].forEach(id => {
                 const m = document.getElementById(id);
                 if (m) m.classList.remove("active");
             });
@@ -142,129 +328,245 @@ const API_BASE = "http://localhost:3000";
             });
         }
 
-        /* ---------- Move cards para suas seções ---------- */
-        function moverCardsParaSecoes() {
-            const tabelaUsuarios = document.querySelector("#tabelaUsuarios");
-            const tabelaCargos = document.querySelector("#tabelaCargos");
-            const overview = document.getElementById("overview");
-            const mainContent = document.getElementById("mainContent");
-
-            let usuariosSection = document.getElementById("usuarios");
-            if (!usuariosSection) {
-                usuariosSection = document.createElement("section");
-                usuariosSection.id = "usuarios";
-                usuariosSection.className = "oculto";
-                if (overview && overview.parentNode) overview.parentNode.insertBefore(usuariosSection, overview.nextSibling);
-                else if (mainContent) mainContent.appendChild(usuariosSection);
-                else document.body.appendChild(usuariosSection);
-            }
-
-            let cargosSection = document.getElementById("cargos");
-            if (!cargosSection) {
-                cargosSection = document.createElement("section");
-                cargosSection.id = "cargos";
-                cargosSection.className = "oculto";
-                if (usuariosSection && usuariosSection.parentNode) usuariosSection.parentNode.insertBefore(cargosSection, usuariosSection.nextSibling);
-                else if (mainContent) mainContent.appendChild(cargosSection);
-                else document.body.appendChild(cargosSection);
-            }
-
-            function moverTabelaParaSecao(tabelaEl, secaoDestino) {
-                if (!tabelaEl || !secaoDestino) return;
-                const cardPai = tabelaEl.closest(".card");
-                if (!cardPai) return;
-                if (cardPai.parentNode === secaoDestino) return;
-                secaoDestino.appendChild(cardPai);
-            }
-
-            moverTabelaParaSecao(tabelaUsuarios, usuariosSection);
-            moverTabelaParaSecao(tabelaCargos, cargosSection);
-
-            atualizarReferenciasAposMovimento();
-        }
-
-        function atualizarReferenciasAposMovimento() {
-            const tabelaUsuarios = document.querySelector("#tabelaUsuarios");
-            const tabelaCargos = document.querySelector("#tabelaCargos");
-            tabelaUsuariosBody = tabelaUsuarios ? tabelaUsuarios.querySelector("tbody") : null;
-            tabelaCargosBody = tabelaCargos ? tabelaCargos.querySelector("tbody") : null;
-            usuariosCard = tabelaUsuarios ? tabelaUsuarios.closest(".card") : document.getElementById("usuarios");
-            cargosCard = tabelaCargos ? tabelaCargos.closest(".card") : document.getElementById("cargos");
-        }
-
-        /* ---------- Render Tabelas ---------- */
-        function renderTabelaUsuarios() {
-            if (!tabelaUsuariosBody) {
-                console.error("Erro: <tbody> da tabela de usuários não encontrado.");
+        /* ---------- SISTEMA DE FILTROS ---------- */
+        function adicionarFiltro(secao, tipo) {
+            if (filtrosAtivos[secao][tipo]) {
+                showMessage("Este filtro já está ativo", false);
                 return;
             }
+            filtrosAtivos[secao][tipo] = {};
+            renderizarFiltros(secao);
+            aplicarFiltros(secao);
+        }
 
-            tabelaUsuariosBody.innerHTML = "";
-            if (!Array.isArray(usuariosCache) || usuariosCache.length === 0) {
-                tabelaUsuariosBody.innerHTML = '<tr><td colspan="5">Nenhum usuário encontrado.</td></tr>';
-                return;
-            }
+        function removerFiltro(secao, tipo) {
+            delete filtrosAtivos[secao][tipo];
+            renderizarFiltros(secao);
+            aplicarFiltros(secao);
+        }
 
-            usuariosCache.forEach(usuario => {
-                const tr = document.createElement("tr");
-                const cargoNome = getCargoNome(usuario.idCargo);
-                const dataCadastroFormatada = formatDate(usuario.dataCadastro);
+        function renderizarFiltros(secao) {
+            const container = document.getElementById(`filtrosAtivos${capitalize(secao)}`);
+            if (!container) return;
 
-                const acoes = `
-                    <button class="btn-inline primary btn-edit-user" data-id="${usuario.idUsuario}" title="Editar usuário">
-                        <span class="btn-icon" aria-hidden="true">✎</span>
-                        <span class="btn-text">Editar</span>
-                    </button>
-                    <button class="btn-inline danger btn-delete-user" data-id="${usuario.idUsuario}" title="Excluir usuário">
-                        <span class="btn-icon" aria-hidden="true">🗑</span>
-                        <span class="btn-text">Excluir</span>
-                    </button>
+            container.innerHTML = '';
+            const filtros = filtrosAtivos[secao];
+
+            Object.keys(filtros).forEach(tipo => {
+                const filterItem = document.createElement('div');
+                filterItem.className = 'filter-item';
+
+                let content = '';
+                let titulo = '';
+
+                switch (tipo) {
+                    case 'busca':
+                        titulo = '🔍 Buscar';
+                        content = `<input type="text" id="filtro${capitalize(secao)}Busca" placeholder="Buscar..." value="${filtros[tipo].valor || ''}" />`;
+                        break;
+
+                    case 'cargo':
+                        titulo = '💼 Cargo';
+                        const opcoesCargo = cargosCache.map(c => c.nomeCargo);
+                        content = `
+                            <select id="filtro${capitalize(secao)}Cargo">
+                                <option value="">Todos</option>
+                                ${opcoesCargo.map(opt => `<option value="${opt}" ${filtros[tipo].valor === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                            </select>
+                        `;
+                        break;
+
+                    case 'ordenar':
+                        titulo = '↕️ Ordenar';
+                        const opcoesOrdem = getOpcoesOrdenacao(secao);
+                        content = `
+                            <select id="filtro${capitalize(secao)}Ordenar">
+                                ${opcoesOrdem.map(opt => `<option value="${opt.value}" ${filtros[tipo].valor === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                            </select>
+                        `;
+                        break;
+                }
+
+                filterItem.innerHTML = `
+                    <div class="filter-item-header">
+                        <span class="filter-item-title">${titulo}</span>
+                        <button class="btn-remove-filter" onclick="window.removerFiltro('${secao}', '${tipo}')">×</button>
+                    </div>
+                    <div class="filter-item-content">${content}</div>
                 `;
 
+                container.appendChild(filterItem);
+            });
+
+            adicionarEventosFiltros(secao);
+        }
+
+        function adicionarEventosFiltros(secao) {
+            const inputBusca = document.getElementById(`filtro${capitalize(secao)}Busca`);
+            if (inputBusca) {
+                inputBusca.addEventListener('input', (e) => {
+                    filtrosAtivos[secao].busca.valor = e.target.value;
+                    aplicarFiltros(secao);
+                });
+            }
+
+            const selectCargo = document.getElementById(`filtro${capitalize(secao)}Cargo`);
+            if (selectCargo) {
+                selectCargo.addEventListener('change', (e) => {
+                    filtrosAtivos[secao].cargo.valor = e.target.value;
+                    aplicarFiltros(secao);
+                });
+            }
+
+            const selectOrdenar = document.getElementById(`filtro${capitalize(secao)}Ordenar`);
+            if (selectOrdenar) {
+                selectOrdenar.addEventListener('change', (e) => {
+                    filtrosAtivos[secao].ordenar.valor = e.target.value;
+                    aplicarFiltros(secao);
+                });
+            }
+        }
+
+        function aplicarFiltros(secao) {
+            let dados = secao === 'usuarios' ? [...usuariosCache] : [...cargosCache];
+            const filtros = filtrosAtivos[secao];
+
+            if (filtros.busca && filtros.busca.valor) {
+                const busca = filtros.busca.valor.toLowerCase();
+                dados = dados.filter(item => buscarEmObjeto(item, busca));
+            }
+
+            if (filtros.cargo && filtros.cargo.valor) {
+                dados = dados.filter(item => {
+                    const cargoNome = getCargoNome(item.idCargo);
+                    return normalizar(cargoNome) === normalizar(filtros.cargo.valor);
+                });
+            }
+
+            if (filtros.ordenar && filtros.ordenar.valor) {
+                ordenarDados(dados, filtros.ordenar.valor, secao);
+            }
+
+            renderizarTabela(secao, dados);
+        }
+
+        function limparFiltros(secao) {
+            filtrosAtivos[secao] = {};
+            renderizarFiltros(secao);
+            aplicarFiltros(secao);
+        }
+
+        function buscarEmObjeto(obj, busca) {
+            return Object.values(obj).some(val =>
+                String(val).toLowerCase().includes(busca)
+            );
+        }
+
+        function ordenarDados(dados, criterio, secao) {
+            dados.sort((a, b) => {
+                const [campo, ordem] = criterio.split('-');
+                let valA = a[campo] || '';
+                let valB = b[campo] || '';
+
+                if (ordem === 'desc') [valA, valB] = [valB, valA];
+
+                return String(valA).localeCompare(String(valB), 'pt-BR', { numeric: true });
+            });
+        }
+
+        function getOpcoesOrdenacao(secao) {
+            const opcoes = [
+                { value: 'idUsuario-asc', label: 'ID (Crescente)' },
+                { value: 'idUsuario-desc', label: 'ID (Decrescente)' }
+            ];
+
+            if (secao === 'usuarios') {
+                opcoes.push(
+                    { value: 'nomeUsuario-asc', label: 'Nome (A-Z)' },
+                    { value: 'nomeUsuario-desc', label: 'Nome (Z-A)' },
+                    { value: 'emailUsuario-asc', label: 'Email (A-Z)' }
+                );
+            } else if (secao === 'cargos') {
+                opcoes.splice(0, 2,
+                    { value: 'idCargo-asc', label: 'ID (Crescente)' },
+                    { value: 'idCargo-desc', label: 'ID (Decrescente)' }
+                );
+                opcoes.push(
+                    { value: 'nomeCargo-asc', label: 'Nome (A-Z)' },
+                    { value: 'nomeCargo-desc', label: 'Nome (Z-A)' },
+                    { value: 'prioridadeCargo-asc', label: 'Prioridade (Crescente)' },
+                    { value: 'prioridadeCargo-desc', label: 'Prioridade (Decrescente)' }
+                );
+            }
+
+            return opcoes;
+        }
+
+        function renderizarTabela(secao, dados) {
+            const tbody = secao === 'usuarios' ? tabelaUsuariosBody : tabelaCargosBody;
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (dados.length === 0) {
+                const colspan = secao === 'usuarios' ? 5 : 3;
+                tbody.innerHTML = `<tr><td colspan="${colspan}" class="empty-state">Nenhum registro encontrado</td></tr>`;
+                return;
+            }
+
+            dados.forEach(item => {
+                const tr = criarLinhaTabela(secao, item);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function criarLinhaTabela(secao, item) {
+            const tr = document.createElement('tr');
+
+            if (secao === 'usuarios') {
+                const cargoNome = getCargoNome(item.idCargo);
+                const dataCadastro = formatDate(item.dataCadastro);
+
                 tr.innerHTML = `
-                    <td>${usuario.nomeUsuario ?? "-"}</td>
-                    <td>${usuario.emailUsuario ?? "-"}</td>
-                    <td>${dataCadastroFormatada}</td>
+                    <td>${item.nomeUsuario ?? "-"}</td>
+                    <td>${item.emailUsuario ?? "-"}</td>
+                    <td>${dataCadastro}</td>
                     <td>${cargoNome}</td>
-                    <td>${acoes}</td>
+                    <td class="center">
+                        <button class="btn-inline primary btn-edit-user" data-id="${item.idUsuario}" title="Editar usuário">
+                            <span class="btn-icon" aria-hidden="true">✎</span>
+                            <span class="btn-text">Editar</span>
+                        </button>
+                        <button class="btn-inline danger btn-delete-user" data-id="${item.idUsuario}" title="Excluir usuário">
+                            <span class="btn-icon" aria-hidden="true">🗑</span>
+                            <span class="btn-text">Excluir</span>
+                        </button>
+                    </td>
                 `;
-                tabelaUsuariosBody.appendChild(tr);
-            });
-        }
+            } else if (secao === 'cargos') {
+                const prioridade = item.prioridadeCargo ?? item.prioridade ?? "-";
 
-        function renderTabelaCargos() {
-            if (!tabelaCargosBody) {
-                console.error("Erro: <tbody> da tabela de cargos não encontrado.");
-                return;
-            }
-
-            tabelaCargosBody.innerHTML = "";
-            if (!Array.isArray(cargosCache) || cargosCache.length === 0) {
-                tabelaCargosBody.innerHTML = '<tr><td colspan="3">Nenhum cargo encontrado.</td></tr>';
-                return;
-            }
-
-            cargosCache.forEach(cargo => {
-                const tr = document.createElement("tr");
-                const prioridade = cargo.prioridadeCargo ?? cargo.prioridade ?? "-";
-                const acoes = `
-                    <button class="btn-inline ghost btn-edit-cargo" data-id="${cargo.idCargo}" title="Editar cargo">
-                        <span class="btn-icon" aria-hidden="true">✎</span>
-                        <span class="btn-text">Editar</span>
-                    </button>
-                    <button class="btn-inline danger btn-delete-cargo" data-id="${cargo.idCargo}" title="Excluir cargo">
-                        <span class="btn-icon" aria-hidden="true">🗑</span>
-                        <span class="btn-text">Excluir</span>
-                    </button>
-                `;
                 tr.innerHTML = `
-                    <td>${cargo.nomeCargo ?? "-"}</td>
+                    <td>${item.nomeCargo ?? "-"}</td>
                     <td>${prioridade}</td>
-                    <td>${acoes}</td>
+                    <td class="center">
+                        <button class="btn-inline primary btn-edit-cargo" data-id="${item.idCargo}" title="Editar cargo">
+                            <span class="btn-icon" aria-hidden="true">✎</span>
+                            <span class="btn-text">Editar</span>
+                        </button>
+                        <button class="btn-inline danger btn-delete-cargo" data-id="${item.idCargo}" title="Excluir cargo">
+                            <span class="btn-icon" aria-hidden="true">🗑</span>
+                            <span class="btn-text">Excluir</span>
+                        </button>
+                    </td>
                 `;
-                tabelaCargosBody.appendChild(tr);
-            });
+            }
+
+            return tr;
         }
+
+        // Expor funções para uso global
+        window.removerFiltro = removerFiltro;
 
         /* ---------- Requisições / Cache ---------- */
         async function carregarCargos() {
@@ -273,19 +575,19 @@ const API_BASE = "http://localhost:3000";
                 showMessage("Falha ao carregar cargos.", false);
                 cargosCache = [];
                 if (countCargos) countCargos.textContent = 0;
-                renderTabelaCargos();
+                aplicarFiltros('cargos');
                 return;
             }
             if (data.status !== true) {
                 showMessage(data.message || "Erro ao obter cargos", false);
                 cargosCache = [];
                 if (countCargos) countCargos.textContent = 0;
-                renderTabelaCargos();
+                aplicarFiltros('cargos');
                 return;
             }
             cargosCache = Array.isArray(data.data) ? data.data : [];
             if (countCargos) countCargos.textContent = cargosCache.length;
-            renderTabelaCargos();
+            aplicarFiltros('cargos');
         }
 
         async function carregarUsuarios() {
@@ -298,20 +600,38 @@ const API_BASE = "http://localhost:3000";
                 showMessage("Falha ao carregar usuários.", false);
                 usuariosCache = [];
                 if (countUsuarios) countUsuarios.textContent = 0;
-                renderTabelaUsuarios();
+                aplicarFiltros('usuarios');
                 return;
             }
             if (data.status !== true) {
                 showMessage(data.message || "Erro ao obter usuários", false);
                 usuariosCache = [];
                 if (countUsuarios) countUsuarios.textContent = 0;
-                renderTabelaUsuarios();
+                aplicarFiltros('usuarios');
                 return;
             }
             usuariosCache = Array.isArray(data.data) ? data.data : [];
             if (countUsuarios) countUsuarios.textContent = usuariosCache.length;
-            renderTabelaUsuarios();
+            aplicarFiltros('usuarios');
         }
+
+        /* ---------- Modal de Confirmação ---------- */
+        function abrirModalConfirmacao(texto, callback) {
+            const modal = document.getElementById("modalConfirmarExclusao");
+            const textoEl = document.getElementById("confirmarExclusaoTexto");
+
+            if (textoEl) textoEl.textContent = texto;
+            confirmarExclusaoCallback = callback;
+            showModal(modal);
+        }
+
+        document.getElementById("btnConfirmarExclusao")?.addEventListener("click", () => {
+            if (confirmarExclusaoCallback) {
+                confirmarExclusaoCallback();
+                confirmarExclusaoCallback = null;
+            }
+            hideModal("modalConfirmarExclusao");
+        });
 
         /* ---------- CRUD ---------- */
         async function criarUsuario(payload) {
@@ -345,18 +665,25 @@ const API_BASE = "http://localhost:3000";
         }
 
         async function excluirUsuario(idUsuario) {
-            if (!confirm(`Deseja realmente excluir o usuário de ID ${idUsuario}?`)) return false;
-            const { ok, data } = await apiFetch(`/usuarios/${idUsuario}`, { method: "DELETE" });
-            if (ok && data && data.status === true) {
-                showMessage(data.message || "Usuário excluído.", true);
-                await carregarUsuarios();
-                return true;
-            } else {
-                const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao excluir usuário";
-                showMessage(msg, false);
-                console.error("excluirUsuario erro:", data);
-                return false;
-            }
+            const usuario = usuariosCache.find(u => String(u.idUsuario) === String(idUsuario));
+            const nomeUsuario = usuario ? usuario.nomeUsuario : `ID ${idUsuario}`;
+
+            abrirModalConfirmacao(
+                `Deseja realmente excluir o usuário "${nomeUsuario}"? Esta ação não pode ser desfeita.`,
+                async () => {
+                    const { ok, data } = await apiFetch(`/usuarios/${idUsuario}`, { method: "DELETE" });
+                    if (ok && data && data.status === true) {
+                        showMessage(data.message || "Usuário excluído.", true);
+                        await carregarUsuarios();
+                        return true;
+                    } else {
+                        const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao excluir usuário";
+                        showMessage(msg, false);
+                        console.error("excluirUsuario erro:", data);
+                        return false;
+                    }
+                }
+            );
         }
 
         async function criarCargo(payload) {
@@ -390,24 +717,30 @@ const API_BASE = "http://localhost:3000";
         }
 
         async function excluirCargo(idCargo) {
-            if (!confirm(`Deseja realmente excluir o cargo de ID ${idCargo}?`)) return false;
-            const { ok, data } = await apiFetch(`/cargos/${idCargo}`, { method: "DELETE" });
-            if (ok && data && data.status === true) {
-                showMessage(data.message || "Cargo excluído.", true);
-                await carregarCargos();
-                return true;
-            } else {
-                const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao excluir cargo";
-                showMessage(msg, false);
-                console.error("excluirCargo erro:", data);
-                return false;
-            }
+            const cargo = cargosCache.find(c => String(c.idCargo) === String(idCargo));
+            const nomeCargo = cargo ? cargo.nomeCargo : `ID ${idCargo}`;
+
+            abrirModalConfirmacao(
+                `Deseja realmente excluir o cargo "${nomeCargo}"? Esta ação não pode ser desfeita.`,
+                async () => {
+                    const { ok, data } = await apiFetch(`/cargos/${idCargo}`, { method: "DELETE" });
+                    if (ok && data && data.status === true) {
+                        showMessage(data.message || "Cargo excluído.", true);
+                        await carregarCargos();
+                        return true;
+                    } else {
+                        const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao excluir cargo";
+                        showMessage(msg, false);
+                        console.error("excluirCargo erro:", data);
+                        return false;
+                    }
+                }
+            );
         }
 
-        /* ---------- Event Delegation (create/edit/delete) ---------- */
+        /* ---------- Event Delegation ---------- */
         document.addEventListener("click", async (ev) => {
-            // CREATE: header button (id) or injected section buttons (data-action)
-            const createUserBtn = ev.target.closest("#btnCreateUserHeader, [data-action='create-user']");
+            const createUserBtn = ev.target.closest("[data-action='create-user']");
             if (createUserBtn) {
                 limparFormCriarUsuario();
                 await carregarCargos();
@@ -418,7 +751,6 @@ const API_BASE = "http://localhost:3000";
 
             const createCargoBtn = ev.target.closest("[data-action='create-cargo']");
             if (createCargoBtn) {
-                // limpar modal de cargo (edit used as create)
                 const idEl = document.getElementById("editarCargoId");
                 const nomeEl = document.getElementById("editarNomeCargo");
                 const priorEl = document.getElementById("editarPrioridadeCargo");
@@ -429,7 +761,6 @@ const API_BASE = "http://localhost:3000";
                 return;
             }
 
-            // Edit user
             const btnEditUser = ev.target.closest(".btn-edit-user");
             if (btnEditUser) {
                 const id = btnEditUser.dataset.id;
@@ -468,7 +799,6 @@ const API_BASE = "http://localhost:3000";
                 return;
             }
 
-            // Delete user
             const btnDeleteUser = ev.target.closest(".btn-delete-user");
             if (btnDeleteUser) {
                 const id = btnDeleteUser.dataset.id;
@@ -476,7 +806,6 @@ const API_BASE = "http://localhost:3000";
                 return;
             }
 
-            // Edit cargo
             const btnEditCargo = ev.target.closest(".btn-edit-cargo");
             if (btnEditCargo) {
                 const id = btnEditCargo.dataset.id;
@@ -505,7 +834,6 @@ const API_BASE = "http://localhost:3000";
                 return;
             }
 
-            // Delete cargo
             const btnDeleteCargo = ev.target.closest(".btn-delete-cargo");
             if (btnDeleteCargo) {
                 const id = btnDeleteCargo.dataset.id;
@@ -547,8 +875,8 @@ const API_BASE = "http://localhost:3000";
                 if (!nome) { showMessage("Nome obrigatório.", false); return; }
                 if (!email || !/^\S+@\S+\.\S+$/.test(email)) { showMessage("Email inválido.", false); return; }
 
-                const payload = { nomeUsuario: nome, emailUsuario: email, idCargo: idCargo, senhaUsuario: senha };
-                if (senha && senha.trim()) payload.senha = senha.trim();
+                const payload = { nomeUsuario: nome, emailUsuario: email, idCargo: idCargo };
+                if (senha && senha.trim()) payload.senhaUsuario = senha.trim();
 
                 await atualizarUsuario(id, payload);
             });
@@ -574,68 +902,28 @@ const API_BASE = "http://localhost:3000";
             });
         }
 
-        /* ---------- Modal control (dismiss/backdrop/ESC) ---------- */
+        /* ---------- Modal control ---------- */
         function setupModalControls() {
-            // Adiciona data-action ao botão header para delegação consistente (não remove o botão)
-            if (btnCreateUserHeader) btnCreateUserHeader.setAttribute("data-action", "create-user");
-
-            // fecha ao clicar no botão com data-dismiss ou no '✕'
             document.addEventListener("click", (ev) => {
                 const dismiss = ev.target.closest("[data-dismiss='modal'], .modal .close");
                 if (dismiss) {
-                    // fecha o modal pai
                     const modal = ev.target.closest(".modal");
                     if (modal) hideModal(modal);
                 }
-                // clique no backdrop
                 if (ev.target.classList && ev.target.classList.contains("backdrop")) {
                     const modal = ev.target.closest(".modal");
                     if (modal) hideModal(modal);
                 }
             });
 
-            // ESC para fechar
             document.addEventListener("keydown", (ev) => {
                 if (ev.key === "Escape") {
-                    ["modalCriarUsuario", "modalEditarUsuario", "modalEditarCargo"].forEach(id => {
+                    ["modalCriarUsuario", "modalEditarUsuario", "modalEditarCargo", "modalConfirmarExclusao"].forEach(id => {
                         const m = document.getElementById(id);
                         if (m && m.classList.contains("active")) hideModal(m);
                     });
                 }
             });
-        }
-
-        /* ---------- Inject section buttons ---------- */
-        function injectSectionButtons(section) {
-            // remove existentes
-            const existingUserBtn = document.getElementById("btnCreateUserSection");
-            if (existingUserBtn && existingUserBtn.parentNode) existingUserBtn.parentNode.removeChild(existingUserBtn);
-            const existingCargoBtn = document.getElementById("btnCreateCargoSection");
-            if (existingCargoBtn && existingCargoBtn.parentNode) existingCargoBtn.parentNode.removeChild(existingCargoBtn);
-
-            atualizarReferenciasAposMovimento();
-
-            if (section === "usuarios" && usuariosCard) {
-                const header = usuariosCard.querySelector(":scope > div") || usuariosCard.firstElementChild;
-                if (!header) return;
-                const btn = document.createElement("button");
-                btn.id = "btnCreateUserSection";
-                btn.className = "btn primary";
-                btn.setAttribute("data-action", "create-user");
-                btn.innerHTML = `<span class="btn-icon" aria-hidden="true">＋</span><span class="btn-text">Criar usuário</span>`;
-                header.appendChild(btn);
-            }
-
-            if (section === "cargos" && cargosCard) {
-                const header = cargosCard.querySelector(":scope > div") || cargosCard.firstElementChild;
-                if (!header) return;
-                const btn = document.createElement("button");
-                btn.id = "btnCreateCargoSection";
-                btn.className = "btn primary";
-                btn.setAttribute("data-action", "create-cargo");
-                btn.innerHTML = `<span class="btn-icon" aria-hidden="true">＋</span><span class="btn-text">Criar cargo</span>`;
-                header.appendChild(btn);
-            }
         }
 
         /* ---------- Navigation ---------- */
@@ -651,9 +939,10 @@ const API_BASE = "http://localhost:3000";
             const overviewEl = document.getElementById("overview");
             const usuariosEl = document.getElementById("usuarios");
             const cargosEl = document.getElementById("cargos");
-            const auditoriaEl = document.getElementById("auditoria");
 
-            [overviewEl, usuariosEl, cargosEl, auditoriaEl].forEach(el => { if (el) el.classList.add("oculto"); });
+            [overviewEl, usuariosEl, cargosEl].forEach(el => {
+                if (el) el.classList.add("oculto");
+            });
 
             const sel = document.getElementById(sectionId);
             if (sel) sel.classList.remove("oculto");
@@ -663,23 +952,77 @@ const API_BASE = "http://localhost:3000";
                     await carregarCargos();
                     popularSelectsCargos();
                     await carregarUsuarios();
-                    injectSectionButtons("usuarios");
                 } else if (sectionId === "cargos") {
                     await carregarCargos();
-                    injectSectionButtons("cargos");
                 }
             })();
         }
 
-        /* ---------- Initialization ---------- */
-        async function inicializarTudo() {
-            garantirModaisFechados();
-            moverCardsParaSecoes();
-            showSection("overview");
-            await carregarCargos();
+        /* ---------- Setup Filtros ---------- */
+        function setupFiltros() {
+            const seletorUsuarios = document.getElementById("seletorFiltroUsuarios");
+            if (seletorUsuarios) {
+                seletorUsuarios.addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        adicionarFiltro('usuarios', e.target.value);
+                        e.target.value = '';
+                    }
+                });
+            }
+
+            const btnLimparUsuarios = document.getElementById("btnLimparFiltrosUsuarios");
+            if (btnLimparUsuarios) {
+                btnLimparUsuarios.addEventListener('click', () => {
+                    limparFiltros('usuarios');
+                });
+            }
+
+            const seletorCargos = document.getElementById("seletorFiltroCargos");
+            if (seletorCargos) {
+                seletorCargos.addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        adicionarFiltro('cargos', e.target.value);
+                        e.target.value = '';
+                    }
+                });
+            }
+
+            const btnLimparCargos = document.getElementById("btnLimparFiltrosCargos");
+            if (btnLimparCargos) {
+                btnLimparCargos.addEventListener('click', () => {
+                    limparFiltros('cargos');
+                });
+            }
         }
 
-        // attach navigation listeners
+        /* ---------- Verificar autenticação ---------- */
+        function verificarAutenticacao() {
+            const token = pegarToken();
+
+            if (!token) {
+                showMessage("Você precisa estar logado para acessar esta página.", false);
+                setTimeout(() => {
+                    window.location.href = "../../html/login.html";
+                }, 2000);
+                return false;
+            }
+
+            return true;
+        }
+
+        /* ---------- Initialization ---------- */
+        async function inicializarTudo() {
+            if (!verificarAutenticacao()) {
+                return;
+            }
+
+            garantirModaisFechados();
+            showSection("overview");
+            await carregarCargos();
+            await carregarUsuarios();
+        }
+
+        // Attach navigation listeners
         navItems.forEach(item => {
             item.addEventListener("click", () => {
                 const sectionId = item.getAttribute("data-section");
@@ -687,16 +1030,37 @@ const API_BASE = "http://localhost:3000";
             });
         });
 
-        // refresh
-        if (btnRefresh) btnRefresh.addEventListener("click", async () => {
-            await inicializarTudo();
-            showMessage("Dados atualizados.", true);
-        });
+        // Refresh button
+        if (btnRefresh) {
+            btnRefresh.addEventListener("click", async () => {
+                await inicializarTudo();
+                showMessage("Dados atualizados.", true);
+            });
+        }
 
-        // setup modals controls
+        // Logout button
+        const btnLogout = document.getElementById("btnLogout");
+        if (btnLogout) {
+            btnLogout.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                realizarLogoutSeguro();
+            });
+        }
+
+        // Setup modal controls
         setupModalControls();
 
-        // start
+        // Setup filtros
+        setupFiltros();
+
+        // Iniciar monitoramento de inatividade
+        iniciarMonitoramentoInatividade();
+
+        // Iniciar verificação periódica do token
+        iniciarVerificacaoToken();
+
+        // Start
         inicializarTudo();
     });
 })();

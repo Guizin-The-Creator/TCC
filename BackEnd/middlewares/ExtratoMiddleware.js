@@ -10,6 +10,29 @@ module.exports = class ExtratoMiddleware {
         next();
     }
 
+    validar_tituloExtrato = (req, res, next) => {
+        const titulo = req.body.tituloExtrato;
+        if (!titulo || typeof titulo !== 'string' || titulo.length > 100) {
+            return res.status(400).send({
+                status: false,
+                error: 'tituloExtrato obrigatório e ≤ 100 caracteres'
+            });
+        }
+        next();
+    }
+
+    validar_descricaoExtrato = (req, res, next) => {
+        const desc = req.body.descricaoExtrato;
+        if (desc && typeof desc !== 'string') {
+            return res.status(400).send({
+                status: false,
+                error: 'descricaoExtrato deve ser texto válido'
+            });
+        }
+        next();
+    }
+
+
     validar_valorExtrato = (req, res, next) => {
         const valor = req.body.valorExtrato;
         if (valor === undefined || isNaN(valor) || Number(valor) < 0) {
@@ -34,7 +57,7 @@ module.exports = class ExtratoMiddleware {
 
     validar_idsRelacionais = (req, res, next) => {
         const { idTarefa, idLancamento, idCategoria, idSubcategoria, idProduto } = req.body;
-        
+
         // Valida que pelo menos um ID relacional está presente
         if (!idTarefa && !idLancamento && !idCategoria && !idSubcategoria && !idProduto) {
             return res.status(400).send({
@@ -42,7 +65,7 @@ module.exports = class ExtratoMiddleware {
                 error: 'Pelo menos um ID relacional é obrigatório (idTarefa, idLancamento, idCategoria, idSubcategoria ou idProduto)'
             });
         }
-        
+
         // Valida os IDs que foram fornecidos (corrigindo os parênteses)
         if (idTarefa && (!Number.isInteger(idTarefa) || idTarefa <= 0)) {
             return res.status(400).send({ error: 'idTarefa deve ser um inteiro positivo' });
@@ -59,7 +82,7 @@ module.exports = class ExtratoMiddleware {
         if (idProduto && (!Number.isInteger(idProduto) || idProduto <= 0)) {
             return res.status(400).send({ error: 'idProduto deve ser um inteiro positivo' });
         }
-        
+
         next();
     }
 };

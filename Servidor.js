@@ -9,6 +9,11 @@ const ProdutoRoutes = require('./BackEnd/routes/ProdutoRoutes');
 const LancamentoRoutes = require('./BackEnd/routes/LancamentoRoutes');
 const ExtratoRoutes = require('./BackEnd/routes/extratoRoutes');
 const IndiceRoutes = require('./BackEnd/routes/IndiceRoutes');
+const CategoriaRoutes = require('./BackEnd/routes/categoriaRoutes');
+const SubcategoriaRoutes = require('./BackEnd/routes/subcategoriaRoutes');
+const SegmentoRoutes = require('./BackEnd/routes/segmentoRoutes');
+const SubsegmentoRoutes = require('./BackEnd/routes/subsegmentoRoutes');
+
 module.exports = class Servidor {
   constructor() {
     this._app = express();
@@ -32,6 +37,10 @@ module.exports = class Servidor {
     this._lancamentoRoutes = new LancamentoRoutes();
     this._extratoRoutes = new ExtratoRoutes();
     this._indiceRoutes = new IndiceRoutes();
+    this._categoriaRoutes = new CategoriaRoutes();
+    this._subcategoriaRoutes = new SubcategoriaRoutes();
+    this._segmentoRoutes = new SegmentoRoutes();
+    this._subsegmentoRoutes = new SubsegmentoRoutes();
 
     this.configurarRotas();
   }
@@ -47,6 +56,10 @@ module.exports = class Servidor {
     this._app.use('/lancamentos', this._lancamentoRoutes.router);
     this._app.use('/extratos', this._extratoRoutes.router);
     this._app.use('/indices', this._indiceRoutes.router);
+    this._app.use('/categorias', this._categoriaRoutes.router);
+    this._app.use('/subcategorias', this._subcategoriaRoutes.router);
+    this._app.use('/segmentos', this._segmentoRoutes.router);
+    this._app.use('/subsegmentos', this._subsegmentoRoutes.router);
   };
 
   iniciar = () => {

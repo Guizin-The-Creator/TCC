@@ -21,6 +21,29 @@ module.exports = class LancamentoMiddleware {
         next();
     }
 
+    validar_tituloLancamento = (req, res, next) => {
+        const titulo = req.body.tituloLancamento;
+        if (!titulo || typeof titulo !== 'string' || titulo.length > 100) {
+            return res.status(400).send({
+                status: false,
+                error: 'tituloLancamento obrigatório e ≤ 100 caracteres'
+            });
+        }
+        next();
+    }
+
+    validar_descricaoLancamento = (req, res, next) => {
+        const desc = req.body.descricaoLancamento;
+        if (desc && typeof desc !== 'string') {
+            return res.status(400).send({
+                status: false,
+                error: 'descricaoLancamento deve ser texto válido'
+            });
+        }
+        next();
+    }
+
+
     validar_classificacaoLancamento = (req, res, next) => {
         const cls = req.body.classificacaoLancamento;
         if (!cls || typeof cls !== 'string' || cls.length > 45) {

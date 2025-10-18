@@ -151,7 +151,8 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.menu-button.active {
+.menu-button.active,
+.menu-button.ativo {
   background: rgba(255, 255, 255, 0.15);
   color: white;
   box-shadow: var(--shadow-glow);
@@ -262,6 +263,208 @@ body {
   height: 1rem;
 }
 
+/* Filters Panel */
+.filters-panel {
+  background: var(--gradient-card);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filters-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.filter-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+.btn-clear-filters {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-clear-filters:hover {
+  background: var(--destructive);
+  color: white;
+  border-color: var(--destructive);
+}
+
+/* Filter Selector (Combobox) */
+.filter-selector {
+  margin-bottom: 1.5rem;
+}
+
+.filter-selector label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.input-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary);
+}
+
+.filter-type-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--foreground);
+  transition: var(--transition-fast);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.filter-type-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px hsla(215, 85%, 50%, 0.1);
+}
+
+/* Active Filters Container */
+.active-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-item {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.filter-item-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-remove-filter {
+  background: transparent;
+  border: none;
+  color: var(--destructive);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-filter:hover {
+  background: hsla(0, 84%, 60%, 0.1);
+}
+
+.btn-remove-filter svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.filter-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-item input,
+.filter-item select {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--foreground);
+  transition: var(--transition-fast);
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.filter-item input:focus,
+.filter-item select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px hsla(215, 85%, 50%, 0.1);
+}
+
+.filter-date-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.filter-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-date-group label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
 /* Stats Cards */
 .stats-grid {
   display: grid;
@@ -289,17 +492,20 @@ body {
   border-color: hsla(215, 85%, 35%, 0.2);
 }
 
-.stats-card.completed {
+.stats-card.completed,
+.stats-card.verde {
   background: linear-gradient(135deg, hsla(142, 70%, 45%, 0.1), hsla(142, 70%, 45%, 0.05));
   border-color: hsla(142, 70%, 45%, 0.2);
 }
 
-.stats-card.pending {
+.stats-card.pending,
+.stats-card.amarelo {
   background: linear-gradient(135deg, hsla(45, 85%, 55%, 0.1), hsla(45, 85%, 55%, 0.05));
   border-color: hsla(45, 85%, 55%, 0.2);
 }
 
-.stats-card.progress {
+.stats-card.progress,
+.stats-card.azul {
   background: linear-gradient(135deg, hsla(215, 85%, 50%, 0.1), hsla(215, 85%, 50%, 0.05));
   border-color: hsla(215, 85%, 50%, 0.2);
 }
@@ -308,6 +514,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.stats-text h3 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--foreground);
 }
 
 .stats-title {
@@ -352,14 +564,6 @@ body {
   color: var(--accent);
 }
 
-.icon-circle {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.2;
-}
-
 /* Table Styles */
 .table-container {
   background: var(--gradient-card);
@@ -391,6 +595,7 @@ body {
 
 .task-table tbody tr {
   transition: var(--transition-fast);
+  cursor: pointer;
 }
 
 .task-table tbody tr:hover {
@@ -458,21 +663,56 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-edit:hover {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+.btn-edit,
+.editar {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
 }
 
-.btn-delete:hover {
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
+.btn-edit:hover,
+.editar:hover {
+  background: var(--primary-dark);
+}
+
+.btn-delete,
+.excluir {
+  background-color: var(--destructive);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-delete:hover,
+.excluir:hover {
+  opacity: 0.9;
 }
 
 .btn-action svg {
   width: 1rem;
   height: 1rem;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-excluir {
+  background-color: #dc3545 !important;
+}
+
+.btn-excluir:hover {
+  background-color: #c82333 !important;
 }
 
 /* Empty State */
@@ -482,6 +722,7 @@ body {
   color: var(--muted-foreground);
   background: var(--gradient-card);
   border-radius: var(--radius);
+  margin-top: 1rem;
 }
 
 .placeholder-content {
@@ -511,6 +752,29 @@ body {
   display: flex;
 }
 
+.modal.oculto {
+  display: none !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.modal {
+  display: none;
+}
+
+.oculto {
+  display: none !important;
+}
+
+.modal:not(.oculto) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal-content {
   background: var(--gradient-card);
   border-radius: var(--radius);
@@ -527,6 +791,13 @@ body {
   font-weight: bold;
   color: var(--foreground);
   margin-bottom: 1.5rem;
+}
+
+#detalhesDescricaoTarefa {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 /* Form Styles */
@@ -641,121 +912,59 @@ body {
     width: 4rem;
     transform: translateX(-100%);
   }
-  
+
   .sidebar.mobile-open {
     transform: translateX(0);
     width: 16rem;
   }
-  
+
   .main-content {
     margin-left: 0;
     padding: 1rem;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
+  .filter-date-range {
+    grid-template-columns: 1fr;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .modal-content {
     margin: 0.5rem;
   }
-  
+
   .task-table {
     font-size: 0.875rem;
   }
-  
+
   .task-table th,
   .task-table td {
     padding: 0.75rem 0.5rem;
   }
 
-  
-  
+  .filters-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
+  .btn-clear-filters {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-.modal.oculto {
-  display: none !important;
-  position: absolute !important;
-  top: -9999px !important;
-  left: -9999px !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-
-.modal {
-  display: none;
-}
-
-.oculto {
-  display: none !important;
-}
-
-.modal:not(.oculto) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#detalhesDescricaoTarefa {
-    white-space: pre-wrap; /* Mantém quebras de linha mas permite quebra automática */
-    word-wrap: break-word; /* Quebra palavras muito longas */
-    max-height: 300px;     /* Limite de altura */
-    overflow-y: auto;      /* Scroll vertical se exceder limite */
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.btn-sm {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #0069d9;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  border: none;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-.btn-excluir {
-  background-color: #dc3545;
-}
-
-.btn-excluir:hover {
-  background-color: #c82333;
-}
-
+/* Utility Classes */
 .styled-table {
   width: 100%;
   border-collapse: collapse;
@@ -774,47 +983,87 @@ body {
   font-weight: bold;
 }
 
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+.resposta {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
 }
 
-.btn-sm {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  cursor: pointer;
+/* Adicione este código ao final do arquivo gerente.css */
+
+/* Loading Spinner para Modal de Redirecionamento */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border: 4px solid var(--secondary);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  border: none;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilo para Resposta Popup */
+.resposta-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 3000;
+  display: none;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 400px;
+}
+
+.resposta-popup.sucesso {
+  background: var(--success);
   color: white;
-  transition: background-color 0.3s ease;
+  border-left: 4px solid hsl(142, 70%, 35%);
 }
 
-.btn-primary:hover {
-  background-color: #0069d9;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  border: none;
+.resposta-popup.erro {
+  background: var(--destructive);
   color: white;
-  transition: background-color 0.3s ease;
+  border-left: 4px solid hsl(0, 84%, 50%);
 }
 
-.btn-secondary:hover {
-  background-color: #5a6268;
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-.btn-excluir {
-  background-color: #dc3545 !important;
+/* Modal de Redirecionamento - Estilo Específico */
+#modalRedirecionamento .modal-content {
+  animation: fadeInScale 0.3s ease-out;
 }
 
-.btn-excluir:hover {
-  background-color: #c82333 !important;
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
-
-

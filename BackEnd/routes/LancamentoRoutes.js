@@ -21,7 +21,9 @@ module.exports = class LancamentoRoutes {
       this._middleware.validar_pagamentoLancamento,
       this._middleware.validar_statusLancamento,
       this._middleware.validar_fkIds,
-      this._controller.Lancamento_create_controller
+      this._controller.Lancamento_create_controller,
+      this._middleware.validar_tituloLancamento,
+      this._middleware.validar_descricaoLancamento
     );
 
     this._router.get('/',
@@ -42,7 +44,10 @@ module.exports = class LancamentoRoutes {
       this._middleware.validar_pagamentoLancamento,
       this._middleware.validar_statusLancamento,
       this._middleware.validar_fkIds,
-      this._controller.Lancamento_update_controller
+      this._controller.Lancamento_update_controller,
+      this._middleware.validar_tituloLancamento,
+      this._middleware.validar_descricaoLancamento,
+
     );
 
     this._router.delete('/:id',
