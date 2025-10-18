@@ -1,10 +1,7 @@
-/* Modern Financial Task Management Dashboard
-   Versão completa com correção de autenticação e modais
-   Compatível com login.js
-*/
+
 
 /* ---------- CONFIGURAÇÕES E UTILITÁRIOS ---------- */
-const baseUrl = 'http://localhost:3000';
+const baseUrl=  'http://localhost:3000';
 
 // Função auxiliar para obter o token do localStorage
 function obterToken() {
@@ -65,6 +62,7 @@ function fetchWithAuth(url, options = {}) {
     'Authorization': `Bearer ${token}`
   };
 
+  
   return fetch(url, options).then(async res => {
     if (res.status === 401 || res.status === 403) {
       console.error("Token inválido ou expirado (servidor)");

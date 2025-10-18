@@ -1,7 +1,4 @@
-/* Modern Financial Task Management Dashboard
-   Versão com integração de tarefas do gerente comum
-   Compatível com login.js
-*/
+
 
 /* ---------- CONFIGURAÇÕES E UTILITÁRIOS ---------- */
 const baseUrl = 'http://localhost:3000';
@@ -1867,16 +1864,6 @@ function renderizarFiltros(secao) {
         `;
         break;
 
-      case 'ordenar':
-        titulo = '↕️ Ordenar';
-        const opcoesOrdem = getOpcoesOrdenacao(secao);
-        content = `
-          <select id="filtro${capitalize(secao)}Ordenar">
-            ${opcoesOrdem.map(opt => `<option value="${opt.value}" ${filtros[tipo].valor === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
-          </select>
-        `;
-        break;
-
       case 'ano':
         titulo = '📅 Ano';
         content = `
@@ -1901,9 +1888,26 @@ function renderizarFiltros(secao) {
         `;
         break;
 
-      case 'ordenar':
-    }
+      case 'segmento':
+        titulo = '📋 Segmento';
+        content = `
+          <select id="filtro${capitalize(secao)}Segmento">
+            <option value="">Todos</option>
+            ${todosSegmentos.map(seg => `<option value="${seg.idSegmento}" ${filtros[tipo].valor == seg.idSegmento ? 'selected' : ''}>${seg.nomeSegmento}</option>`).join('')}
+          </select>
+        `;
+        break;
 
+      case 'ordenar':
+        titulo = '↕️ Ordenar';
+        const opcoesOrdem = getOpcoesOrdenacao(secao);
+        content = `
+          <select id="filtro${capitalize(secao)}Ordenar">
+            ${opcoesOrdem.map(opt => `<option value="${opt.value}" ${filtros[tipo].valor === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+          </select>
+        `;
+        break;
+    }
 
     filterItem.innerHTML = `
       <div class="filter-item-header">
@@ -1921,7 +1925,6 @@ function renderizarFiltros(secao) {
   atualizarIconesLucide();
   adicionarEventosFiltros(secao);
 }
-
 function adicionarEventosFiltros(secao) {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -1960,6 +1963,7 @@ function adicionarEventosFiltros(secao) {
   const inputDataDe = document.getElementById(`filtro${capitalize(secao)}DataDe`);
   if (inputDataDe) {
     inputDataDe.addEventListener('change', (e) => {
+      filtrosAtivos[secao].data = filtrosAtivos[secao].data || {};
       filtrosAtivos[secao].data.dataDe = e.target.value;
       aplicarFiltros(secao);
     });
@@ -1968,6 +1972,7 @@ function adicionarEventosFiltros(secao) {
   const inputDataAte = document.getElementById(`filtro${capitalize(secao)}DataAte`);
   if (inputDataAte) {
     inputDataAte.addEventListener('change', (e) => {
+      filtrosAtivos[secao].data = filtrosAtivos[secao].data || {};
       filtrosAtivos[secao].data.dataAte = e.target.value;
       aplicarFiltros(secao);
     });
@@ -1993,6 +1998,14 @@ function adicionarEventosFiltros(secao) {
   if (selectTrimestre) {
     selectTrimestre.addEventListener('change', (e) => {
       filtrosAtivos[secao].trimestre.valor = e.target.value;
+      aplicarFiltros(secao);
+    });
+  }
+
+  const selectSegmento = document.getElementById(`filtro${capitalize(secao)}Segmento`);
+  if (selectSegmento) {
+    selectSegmento.addEventListener('change', (e) => {
+      filtrosAtivos[secao].segmento.valor = e.target.value;
       aplicarFiltros(secao);
     });
   }
@@ -2527,19 +2540,19 @@ function configurarSeletoresFiltros() {
 
 function configurarBotoesLimparFiltros() {
   const botoes = [
-    'btnLimparFiltrosLancamentos',
-    'btnLimparFiltrosExtratos',
-    'btnLimparFiltrosIndices',
-    'btnLimparFiltrosProdutos',
-    'btnLimparFiltrosOrcamentosAnuais',
-    'btnLimparFiltrosOrcamentosTri'
+    { id: 'btnLimparFiltrosLancamentos', secao: 'lancamentos' },
+    { id: 'btnLimparFiltrosExtratos', secao: 'extratos' },
+    { id: 'btnLimparFiltrosIndices', secao: 'indices' },
+    { id: 'btnLimparFiltrosProdutos', secao: 'produtos' },
+    { id: 'btnLimparFiltrosOrcamentosAnuais', secao: 'orcamentosAnuais' },
+    { id: 'btnLimparFiltrosOrcamentosTri', secao: 'orcamentosTri' }
   ];
 
-  botoes.forEach(btnId => {
-    const btn = document.getElementById(btnId);
+  botoes.forEach(({ id, secao }) => {
+    const btn = document.getElementById(id);
     if (btn) {
       btn.addEventListener('click', () => {
-        const secao = btnId.replace('btnLimparFiltros', '').toLowerCase();
+        console.log(`Limpando filtros da seção: ${secao}`);
         limparFiltros(secao);
       });
     }
