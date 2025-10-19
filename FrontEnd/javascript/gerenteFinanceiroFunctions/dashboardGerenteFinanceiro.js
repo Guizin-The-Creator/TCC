@@ -1795,9 +1795,17 @@ function removerFiltro(secao, tipo) {
 }
 
 function renderizarFiltros(secao) {
-  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+  const capitalize = (str) => {
+    if (str === 'orcamentosAnuais') return 'OrcamentosAnuais';
+    if (str === 'orcamentosTri') return 'OrcamentosTri';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   const container = document.getElementById(`filtrosAtivos${capitalize(secao)}`);
-  if (!container) return;
+  if (!container) {
+    console.error(`Container de filtros não encontrado: filtrosAtivos${capitalize(secao)}`);
+    return;
+  }
 
   container.innerHTML = '';
   const filtros = filtrosAtivos[secao];
@@ -2065,9 +2073,27 @@ function aplicarFiltros(secao) {
 
   if (filtros.ano && filtros.ano.valor) {
     dados = dados.filter(item => {
-      const anoItem = item.anoOrcamentoAnual || item.anoIndice || item.anoOrcamentoTri;
+      let anoItem;
+      if (secao === 'orcamentosAnuais') {
+        anoItem = item.anoOrcamentoAnual;
+      } else if (secao === 'orcamentosTri') {
+        const orcAnual = todosOrcamentosAnuais.find(o => o.idOrcamentoAnual == item.idOrcamentoAnual);
+        anoItem = orcAnual ? orcAnual.anoOrcamentoAnual : null;
+      } else if (secao === 'indices') {
+        anoItem = item.anoIndice;
+      }
       return String(anoItem) === String(filtros.ano.valor);
     });
+  }
+
+  // Trimestre (aplicável a orçamentos trimestrais)
+  if (filtros.trimestre && filtros.trimestre.valor) {
+    dados = dados.filter(item => String(item.trimestreOrcamentoTri) === String(filtros.trimestre.valor));
+  }
+
+  // Segmento (aplicável a produtos)
+  if (filtros.segmento && filtros.segmento.valor) {
+    dados = dados.filter(item => String(item.idSegmento) === String(filtros.segmento.valor));
   }
 
   // Trimestre (aplicável a orçamentos trimestrais)
@@ -2198,13 +2224,33 @@ function getOpcoesOrdenacao(secao) {
     case 'indices':
       opcoes.push(
         { value: 'nomeIndice-asc', label: 'Nome (A-Z)' },
+        { value: 'nomeIndice-desc', label: 'Nome (Z-A)' },
+        { value: 'anoIndice-asc', label: 'Ano (Antigo)' },
         { value: 'anoIndice-desc', label: 'Ano (Recente)' }
       );
       break;
     case 'produtos':
       opcoes.push(
         { value: 'nomeProduto-asc', label: 'Nome (A-Z)' },
+        { value: 'nomeProduto-desc', label: 'Nome (Z-A)' },
+        { value: 'custoProduto-asc', label: 'Custo (Menor)' },
         { value: 'custoProduto-desc', label: 'Custo (Maior)' }
+      );
+      break;
+    case 'orcamentosAnuais':
+      opcoes.push(
+        { value: 'anoOrcamentoAnual-asc', label: 'Ano (Antigo)' },
+        { value: 'anoOrcamentoAnual-desc', label: 'Ano (Recente)' },
+        { value: 'valorOrcamentoAnual-asc', label: 'Valor (Menor)' },
+        { value: 'valorOrcamentoAnual-desc', label: 'Valor (Maior)' }
+      );
+      break;
+    case 'orcamentosTri':
+      opcoes.push(
+        { value: 'trimestreOrcamentoTri-asc', label: 'Trimestre (1-4)' },
+        { value: 'trimestreOrcamentoTri-desc', label: 'Trimestre (4-1)' },
+        { value: 'valorOrcamentoTri-asc', label: 'Valor (Menor)' },
+        { value: 'valorOrcamentoTri-desc', label: 'Valor (Maior)' }
       );
       break;
   }
@@ -2398,6 +2444,27 @@ function mostrarModalRedirecionamento() {
   modal.classList.add("active");
 }
 
+function configurarBotoesLimparFiltros() {
+  const botoes = [
+    { id: 'btnLimparFiltrosLancamentos', secao: 'lancamentos' },
+    { id: 'btnLimparFiltrosExtratos', secao: 'extratos' },
+    { id: 'btnLimparFiltrosIndices', secao: 'indices' },
+    { id: 'btnLimparFiltrosProdutos', secao: 'produtos' },
+    { id: 'btnLimparFiltrosOrcamentosAnuais', secao: 'orcamentosAnuais' },
+    { id: 'btnLimparFiltrosOrcamentosTri', secao: 'orcamentosTri' }
+  ];
+
+  botoes.forEach(({ id, secao }) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        console.log(`Limpando filtros da seção: ${secao}`);
+        limparFiltros(secao);
+      });
+    }
+  });
+}
+
 function configurarEventListeners() {
   configurarSeletoresFiltros();
   configurarBotoesLimparFiltros();
@@ -2514,6 +2581,8 @@ function configurarEventListeners() {
   configurarListenersSegmentoSubsegmento();
 }
 
+
+
 function configurarSeletoresFiltros() {
   const seletores = [
     'seletorFiltroLancamentos',
@@ -2538,27 +2607,28 @@ function configurarSeletoresFiltros() {
   });
 }
 
-function configurarBotoesLimparFiltros() {
-  const botoes = [
-    { id: 'btnLimparFiltrosLancamentos', secao: 'lancamentos' },
-    { id: 'btnLimparFiltrosExtratos', secao: 'extratos' },
-    { id: 'btnLimparFiltrosIndices', secao: 'indices' },
-    { id: 'btnLimparFiltrosProdutos', secao: 'produtos' },
-    { id: 'btnLimparFiltrosOrcamentosAnuais', secao: 'orcamentosAnuais' },
-    { id: 'btnLimparFiltrosOrcamentosTri', secao: 'orcamentosTri' }
+function configurarSeletoresFiltros() {
+  const seletores = [
+    { id: 'seletorFiltroLancamentos', secao: 'lancamentos' },
+    { id: 'seletorFiltroExtratos', secao: 'extratos' },
+    { id: 'seletorFiltroIndices', secao: 'indices' },
+    { id: 'seletorFiltroProdutos', secao: 'produtos' },
+    { id: 'seletorFiltroOrcamentosAnuais', secao: 'orcamentosAnuais' },
+    { id: 'seletorFiltroOrcamentosTri', secao: 'orcamentosTri' }
   ];
 
-  botoes.forEach(({ id, secao }) => {
-    const btn = document.getElementById(id);
-    if (btn) {
-      btn.addEventListener('click', () => {
-        console.log(`Limpando filtros da seção: ${secao}`);
-        limparFiltros(secao);
+  seletores.forEach(({ id, secao }) => {
+    const seletor = document.getElementById(id);
+    if (seletor) {
+      seletor.addEventListener('change', (e) => {
+        if (e.target.value) {
+          adicionarFiltro(secao, e.target.value);
+          e.target.value = '';
+        }
       });
     }
   });
 }
-
 function configurarBotoesModais() {
   const btnNovoLancamento = document.getElementById("btnNovoLancamento");
   if (btnNovoLancamento) btnNovoLancamento.addEventListener("click", abrirModalCriarLancamento);
