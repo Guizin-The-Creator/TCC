@@ -1,12 +1,44 @@
 const API_BASE = "http://localhost:3000";
 
+/* ---------- VARIÁVEIS GLOBAIS ---------- */
+let timerInatividade;
+const TEMPO_INATIVIDADE = 30 * 60 * 1000; // 30 minutos
+let divResposta = null;
+
+/* ---------- FUNÇÃO PEGARTOKEN (ESCOPO GLOBAL) ---------- */
+function pegarToken() {
+    const authData = localStorage.getItem("authToken");
+
+    if (!authData) return null;
+
+    try {
+        const { token, timestamp } = JSON.parse(authData);
+
+        // Verificar se o token expirou (24 horas)
+        const tempoDecorrido = Date.now() - timestamp;
+        const TEMPO_EXPIRACAO = 24 * 60 * 60 * 1000;
+
+        if (tempoDecorrido >= TEMPO_EXPIRACAO) {
+            localStorage.removeItem("authToken");
+            return null;
+        }
+
+        const tokenLimpo = token.trim().replace(/^"|"$/g, "");
+
+        if (!tokenLimpo || tokenLimpo === "null" || tokenLimpo === "undefined" || tokenLimpo.length < 20) {
+            return null;
+        }
+
+        return tokenLimpo;
+    } catch (e) {
+        console.error("Erro ao processar authToken:", e);
+        localStorage.removeItem("authToken");
+        return null;
+    }
+}
+
 (function () {
     "use strict";
-
-    /* ---------- VARIÁVEIS GLOBAIS ---------- */
-    let timerInatividade;
-    const TEMPO_INATIVIDADE = 30 * 60 * 1000; // 30 minutos
-    let divResposta = null;
 
     /* ---------- FUNÇÃO SHOWMESSAGE (DEFINIDA NO TOPO) ---------- */
     function showMessage(msg, sucesso = true, timeout = 4000) {
@@ -145,20 +177,6 @@ const API_BASE = "http://localhost:3000";
         }, 5 * 60 * 1000);
     }
 
-    // Detectar quando a página volta a ficar visível
-    document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) {
-            const token = pegarToken();
-
-            if (!token) {
-                showMessage("Sua sessão expirou.", false);
-                setTimeout(() => {
-                    window.location.replace("../../html/login.html");
-                }, 2000);
-            }
-        }
-    });
-
     /* ---------- FIM DO SISTEMA DE LOGOUT SEGURO ---------- */
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -185,36 +203,7 @@ const API_BASE = "http://localhost:3000";
         let confirmarExclusaoCallback = null;
 
         /* ---------- Helpers ---------- */
-        function pegarToken() {
-            const authData = localStorage.getItem("authToken");
-
-            if (!authData) return null;
-
-            try {
-                const { token, timestamp } = JSON.parse(authData);
-
-                // Verificar se o token expirou (24 horas)
-                const tempoDecorrido = Date.now() - timestamp;
-                const TEMPO_EXPIRACAO = 24 * 60 * 60 * 1000;
-
-                if (tempoDecorrido >= TEMPO_EXPIRACAO) {
-                    localStorage.removeItem("authToken");
-                    return null;
-                }
-
-                const tokenLimpo = token.trim().replace(/^"|"$/g, "");
-
-                if (!tokenLimpo || tokenLimpo === "null" || tokenLimpo === "undefined" || tokenLimpo.length < 20) {
-                    return null;
-                }
-
-                return tokenLimpo;
-            } catch (e) {
-                console.error("Erro ao processar authToken:", e);
-                localStorage.removeItem("authToken");
-                return null;
-            }
-        }
+        // pegarToken agora está definida no escopo global
 
         function apiFetch(path, options = {}) {
             const token = pegarToken();
@@ -642,7 +631,7 @@ const API_BASE = "http://localhost:3000";
                 await carregarUsuarios();
                 return true;
             } else {
-                const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao criar usuário";
+                const msg = data ? (data.message || data.error || JSON.stringify(data)) : "Erro ao criar usuário";
                 showMessage(msg, false);
                 console.error("criarUsuario erro:", data);
                 return false;
@@ -657,7 +646,7 @@ const API_BASE = "http://localhost:3000";
                 await carregarUsuarios();
                 return true;
             } else {
-                const msg = data ? (data.message || JSON.stringify(data)) : "Erro ao atualizar usuário";
+                const msg = data ? (data.message || data.error || JSON.stringify(data)) : "Erro ao atualizar usuário";
                 showMessage(msg, false);
                 console.error("atualizarUsuario erro:", data);
                 return false;
@@ -1062,5 +1051,24 @@ const API_BASE = "http://localhost:3000";
 
         // Start
         inicializarTudo();
+    });
+
+    // Detectar quando a página volta a ficar visível
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            const token = pegarToken();
+
+            if (!token) {
+                const divResposta = document.getElementById("divResposta");
+                if (divResposta) {
+                    divResposta.innerText = "Sua sessão expirou.";
+                    divResposta.classList.add("erro");
+                    divResposta.style.display = "block";
+                }
+                setTimeout(() => {
+                    window.location.replace("../../html/login.html");
+                }, 2000);
+            }
+        }
     });
 })();

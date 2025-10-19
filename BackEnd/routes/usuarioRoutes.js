@@ -1,5 +1,5 @@
 const express = require('express');
-const UsuarioMiddleware = require('../middlewares/UsuarioMiddleware');
+const UsuarioMiddleware = require('../middlewares/usuarioMiddleware');
 const UsuarioController = require('../controllers/UsuarioController');
 
 module.exports = class UsuarioRoutes {
@@ -30,7 +30,6 @@ module.exports = class UsuarioRoutes {
             this._usuarioMiddleware.validar_nomeUsuario,
             this._usuarioMiddleware.validar_emailUsuario,
             this._usuarioMiddleware.validar_senhaUsuario,
-            this._usuarioMiddleware.validar_emailDuplicado,
             this._usuarioController.Usuario_update_controller
         );
         this._router.delete('/:id', this._usuarioController.Usuario_delete_controller);
