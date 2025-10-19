@@ -1,9 +1,10 @@
 
 
 /* ---------- CONFIGURAÇÕES E UTILITÁRIOS ---------- */
-const baseUrl=  'http://localhost:3000';
+const baseUrl = 'http://localhost:3000';
 
 // Função auxiliar para obter o token do localStorage
+//Recuperar e validar o token JWT do localStorage
 function obterToken() {
   const authData = localStorage.getItem("authToken");
 
@@ -45,7 +46,9 @@ function pegarUserIdDoToken() {
   }
 }
 
-// Fetch com autenticação
+
+//Fazer requisições HTTP com autenticação automática 
+//RETORNO: Promise com dados JSON da resposta 
 function fetchWithAuth(url, options = {}) {
   const token = obterToken();
 
@@ -55,6 +58,7 @@ function fetchWithAuth(url, options = {}) {
     return Promise.reject(new Error("Token não encontrado"));
   }
 
+  // Adiciona o token JWT no header Authorization
   const headers = options.headers || {};
   options.headers = {
     'Content-Type': 'application/json',
@@ -62,7 +66,7 @@ function fetchWithAuth(url, options = {}) {
     'Authorization': `Bearer ${token}`
   };
 
-  
+
   return fetch(url, options).then(async res => {
     if (res.status === 401 || res.status === 403) {
       console.error("Token inválido ou expirado (servidor)");
@@ -83,7 +87,8 @@ function fetchWithAuth(url, options = {}) {
   });
 }
 
-// Sistema de notificações moderno
+// Sistema de notificações
+//Exibir notificações toast animadas para o usuário
 function mostrarRespostaPopup(mensagem, sucesso = true, tempo = 3500) {
   const existingNotifications = document.querySelectorAll('.notification');
   existingNotifications.forEach(n => n.remove());
@@ -158,12 +163,17 @@ function mostrarRespostaPopup(mensagem, sucesso = true, tempo = 3500) {
 }
 
 /* ---------- ESTADO GLOBAL ---------- */
+
+//id do usuário logado
 const userId = pegarUserIdDoToken();
+
+// Estado atual do dashboard
 let dataCadastroAtual = null;
 let idCargoAtual = null;
 let calendarioInstancia = null;
 
 // Dados em cache
+//Armazenam dados em memória para evitar requisições desnecessárias à API
 let todosLancamentos = [];
 let todosExtratos = [];
 let todosIndices = [];
@@ -176,6 +186,7 @@ let todosSegmentos = [];
 let todosSubsegmentos = [];
 
 // Filtros ativos por seção
+//Sistema de filtros por seção
 let filtrosAtivos = {
   tarefas: {},
   lancamentos: {},
@@ -184,7 +195,7 @@ let filtrosAtivos = {
   produtos: {}
 };
 
-// Instâncias de gráficos
+// Instâncias de gráficos - Objetos Chart.js ou similares
 let graficoInstances = {
   tarefas: null,
   fluxoCaixa: null,
@@ -196,6 +207,7 @@ let graficoInstances = {
 };
 
 /* ---------- ELEMENTOS DOM ---------- */
+//Referências aos elementos HTML principais  
 const elements = {
   tbodyTarefas: document.getElementById("tbodyTarefas"),
   postit: document.getElementById("postit"),
@@ -219,6 +231,8 @@ const elements = {
 };
 
 /* ---------- FUNÇÕES UTILITÁRIAS ---------- */
+
+//Prevenir ataques XSS escapando caracteres especiais
 function escaparHTML(texto) {
   return (texto || '').replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -227,12 +241,14 @@ function escaparHTML(texto) {
     .replace(/'/g, "&#039;");
 }
 
+//Normalizar texto para comparações (remove acentos)
 function normalizar(txt) {
   return (txt || "").toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+//Formatar data ISO para DD/MM/YYYY HH:MM 
 function formatarDataExibicao(dataISO) {
   if (!dataISO) return '-';
   try {
@@ -250,15 +266,18 @@ function formatarDataExibicao(dataISO) {
   }
 }
 
+//Formatar data ISO para DD/MM/YYYY (sem hora)    
 function formatarData(dataStr) {
   if (!dataStr) return '-';
   return new Date(dataStr).toLocaleDateString('pt-BR');
 }
 
+//Formatar número para moeda brasileira (R$ 1.234,56) 
 function formatarMoeda(valor) {
   return `R$ ${parseFloat(valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
 
+//Padronizar nomes de status de tarefas 
 function formatarStatus(status) {
   const s = (status || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   switch (s) {
@@ -269,6 +288,7 @@ function formatarStatus(status) {
   }
 }
 
+//Retornar classe CSS baseada na prioridade
 function obterCorPrioridade(prioridade) {
   switch ((prioridade || "").toLowerCase()) {
     case "alta": return "vermelha";
@@ -279,12 +299,15 @@ function obterCorPrioridade(prioridade) {
   }
 }
 
+
+//Renderizar ícones do Lucide.js após mudanças no DOM
 function atualizarIconesLucide() {
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
   }
 }
 
+// Função genérica para buscar dados de qualquer endpoint
 async function fetchData(url) {
   try {
     const res = await fetchWithAuth(url);
@@ -300,6 +323,8 @@ async function fetchData(url) {
 }
 
 /* ---------- CARREGAMENTO DE CATEGORIAS, SUBCATEGORIAS E TAREFAS ---------- */
+
+//Buscar todas as categorias disponíveis (GET /categorias)
 async function carregarCategorias() {
   try {
     const res = await fetchWithAuth(`${baseUrl}/categorias`);
@@ -311,6 +336,7 @@ async function carregarCategorias() {
   }
 }
 
+//Buscar todas as subcategorias disponíveis (GET /subcategorias)
 async function carregarSubcategorias() {
   try {
     const res = await fetchWithAuth(`${baseUrl}/subcategorias`);
@@ -322,6 +348,7 @@ async function carregarSubcategorias() {
   }
 }
 
+//Buscar detalhes de uma tarefa específica pelo ID (GET /tarefas/:id)
 async function carregarTarefasComTitulo() {
   try {
     const data = await fetchWithAuth(`${baseUrl}/usuariostarefas/${userId}`);
@@ -344,6 +371,7 @@ async function carregarTarefasComTitulo() {
   }
 }
 
+//Buscar todos os segmentos disponíveis (GET /segmentos)
 async function carregarSegmentos() {
   try {
     const res = await fetchWithAuth(`${baseUrl}/segmentos`);
@@ -355,6 +383,7 @@ async function carregarSegmentos() {
   }
 }
 
+//Buscar todos os subsegmentos disponíveis (GET /subsegmentos)
 async function carregarSubsegmentos() {
   try {
     const res = await fetchWithAuth(`${baseUrl}/subsegmentos`);
@@ -367,6 +396,8 @@ async function carregarSubsegmentos() {
 }
 
 /* ---------- PREENCHIMENTO DE SELECTS ---------- */
+
+//Popular dropdown de categorias 
 function preencherSelectCategorias(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -381,6 +412,7 @@ function preencherSelectCategorias(selectId) {
   });
 }
 
+//Popular dropdown de subcategorias (filtrado ou completo) 
 function preencherSelectSubcategorias(selectId, idCategoriaFiltro = null) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -399,6 +431,7 @@ function preencherSelectSubcategorias(selectId, idCategoriaFiltro = null) {
   });
 }
 
+//Popular dropdown de segmentos
 function preencherSelectSegmentos(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -413,6 +446,7 @@ function preencherSelectSegmentos(selectId) {
   });
 }
 
+//Popular dropdown de subsegmentos (filtrado ou completo)
 function preencherSelectSubsegmentos(selectId, idSegmentoFiltro = null) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -431,6 +465,7 @@ function preencherSelectSubsegmentos(selectId, idSegmentoFiltro = null) {
   });
 }
 
+//Popular dropdown de tarefas com título
 function preencherSelectTarefas(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -445,6 +480,7 @@ function preencherSelectTarefas(selectId) {
   });
 }
 
+//Popular dropdown de produtos
 function preencherSelectProdutos(selectId) {
   const select = document.getElementById(selectId);
   if (!select) {
@@ -464,6 +500,8 @@ function preencherSelectProdutos(selectId) {
   });
 }
 
+//Criar dependência dinâmica entre categoria e subcategoria
+//COMPORTAMENTO: Ao selecionar categoria, atualiza subcategorias
 function configurarListenersCategoriaSubcategoria() {
   const selectCategoriaLancamento = document.getElementById("categoriaLancamento");
   const selectSubcategoriaLancamento = document.getElementById("subcategoriaLancamento");
@@ -486,6 +524,8 @@ function configurarListenersCategoriaSubcategoria() {
   }
 }
 
+//Criar dependência dinâmica entre segmento e subsegmento
+//COMPORTAMENTO: Ao selecionar Segmento, atualiza Subsegmentos
 function configurarListenersSegmentoSubsegmento() {
   // Para Produtos
   const selectSegmentoProduto = document.getElementById("idSegmentoProduto");
@@ -498,7 +538,6 @@ function configurarListenersSegmentoSubsegmento() {
     });
   }
 
-  // Para Índices
   const selectSegmentoIndice = document.getElementById("idSegmentoIndice");
   const selectSubsegmentoIndice = document.getElementById("idSubsegmentoIndice");
 
@@ -511,7 +550,10 @@ function configurarListenersSegmentoSubsegmento() {
 }
 
 /* ---------- FUNÇÕES PARA MODAIS DINÂMICOS ---------- */
+
+
 // Função global para mostrar modal de confirmação
+//USO: Usado antes de ações destrutivas (excluir, sair, etc.)
 window.mostrarModalConfirmacao = function (mensagem, onConfirmar) {
   const modal = document.getElementById("modalConfirmacaoFinanceiro");
   if (!modal) return;
@@ -599,6 +641,9 @@ window.mostrarModalDetalhes = function (tituloTexto, descricaoTexto) {
 };
 
 /* ---------- INICIALIZAÇÃO ---------- */
+
+//Inicializar aplicação quando DOM estiver pronto 
+//Verifica token → Cria modais → Configura eventos → Carrega 
 document.addEventListener("DOMContentLoaded", () => {
   const token = obterToken();
 
@@ -610,6 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Inicializando Dashboard Financeiro...");
   criarModaisDinamicos();
+  // Adicionar todos os event listeners da aplicação
   configurarEventListeners();
   inicializarDashboard();
 });
@@ -628,6 +674,7 @@ function criarModaisDinamicos() {
   appendIfMissing(criarModalDetalhesTarefa);
   appendIfMissing(criarModalRedirecionamento);
 }
+
 
 function obterNomeSegmento(idSegmento) {
   if (!idSegmento) return '-';
@@ -715,13 +762,16 @@ function mostrarModalRedirecionamento() {
 }
 
 function configurarEventListeners() {
+  // 1. Formulário de edição de tarefa
   if (elements.formEditar) {
     elements.formEditar.addEventListener("submit", handleEditarTarefa);
   }
 
+  // 2. Sistema de filtros
   configurarSeletoresFiltros();
   configurarBotoesLimparFiltros();
 
+  // 3. Formulários CRUD (Create, Read, Update, Delete)
   const formsHandlers = {
     'formLancamento': salvarLancamento,
     'formExtrato': salvarExtrato,
@@ -735,8 +785,7 @@ function configurarEventListeners() {
     if (form) form.addEventListener("submit", handler);
   });
 
-  const btnExportarXML = document.getElementById("btnExportarXML");
-  if (btnExportarXML) btnExportarXML.addEventListener("click", gerarXMLFinanceiro);
+
 
   document.querySelectorAll(".btn-nav").forEach(btn => {
     btn.addEventListener("click", (e) => {
@@ -827,6 +876,7 @@ function configurarBotoesModais() {
   if (btnNovoIndice) btnNovoIndice.addEventListener("click", abrirModalCriarIndice);
 }
 
+//Carregar todos os dados iniciais da aplicação
 async function inicializarDashboard() {
   try {
     const token = obterToken();
@@ -839,20 +889,23 @@ async function inicializarDashboard() {
       return;
     }
 
-    // Carregar produtos e lançamentos ANTES de tudo
+    // CRÍTICO: Carregar dados básicos PRIMEIRO
+    await carregarCategorias();
+    await carregarSubcategorias();
+    await carregarSegmentos();
+    await carregarSubsegmentos();
+
+    // Carregar produtos e lançamentos ANTES de tarefas
     await carregarProdutos();
     await carregarLancamentos();
 
-    await Promise.all([
-      carregarTarefas(),
-      carregarPostit(),
-      carregarPerfil(),
-      carregarCategorias(),
-      carregarSubcategorias(),
-      carregarTarefasComTitulo(),
-      carregarSegmentos(),
-      carregarSubsegmentos()
-    ]);
+    // Depois carregar tarefas
+    await carregarTarefas();
+    await carregarTarefasComTitulo();
+
+    // Carregar outros dados
+    await carregarExtratos();
+    await carregarIndices();
 
     mostrarPainel('tarefas');
     console.log("Dashboard inicializado com sucesso!");
@@ -873,6 +926,8 @@ async function inicializarDashboard() {
 }
 
 /* ---------- LOGOUT SEGURO ---------- */
+
+//Verificar validade do token a cada 5 minutos
 setInterval(() => {
   const token = obterToken();
   if (!token) {
@@ -885,17 +940,28 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 /* ---------- NAVEGAÇÃO ENTRE PAINÉIS ---------- */
+
+//Alternar entre diferentes seções do dashboard
+//PROCESSO:                                                           │
+// │   1. Atualiza classes CSS dos botões de navegação                  │
+// │   2. Oculta todos os painéis                                        │
+// │   3. Mostra o painel solicitado                                     │
+// │   4. Carrega/atualiza dados específicos da seção  
+
 function mostrarPainel(secao) {
+  // Atualiza botões de navegação
   document.querySelectorAll('.btn-nav').forEach(btn => {
     btn.classList.remove('ativo', 'active');
     if (btn.dataset.secao === secao) btn.classList.add('ativo', 'active');
   });
 
+  // Oculta todos os painéis
   document.querySelectorAll('.content-section').forEach(section => {
     section.classList.remove('active');
     section.classList.add('oculto');
   });
 
+  // Mostra o painel selecionado
   const painel = document.getElementById(`painel-${secao}`);
   if (!painel) {
     console.warn(`Painel não encontrado: painel-${secao}`);
@@ -905,6 +971,7 @@ function mostrarPainel(secao) {
   painel.classList.add('active');
   painel.classList.remove('oculto');
 
+  // Carrega dados específicos de cada seção
   switch (secao) {
     case "tarefas":
       aplicarFiltros('tarefas');
@@ -936,6 +1003,12 @@ function mostrarPainel(secao) {
   }
 }
 
+
+//Carregar visão geral financeira (KPIs + gráficos) 
+//CARREGA:                                                            
+//    - KPIs (receitas, despesas, saldo, lançamentos abertos)          
+//    - Fluxo de caixa mensal                                           
+//    - Gráficos de lançamentos e extratos 
 async function carregarDashboardFinanceiro() {
   await Promise.all([
     carregarKPIsFinanceiros(),
@@ -1103,6 +1176,11 @@ function criarModalRedirecionamento() {
 }
 
 /* ---------- GESTÃO DE TAREFAS ---------- */
+
+//Processar submissão do formulário de edição de tarefa
+//COMPORTAMENTO ESPECIAL:                                             
+//     Se status = "Concluída": Mostra modal de confirmação           
+//     Outros status: Atualiza diretamente 
 async function handleEditarTarefa(e) {
   e.preventDefault();
   const id = elements.idTarefaSelecionada.value;
@@ -1121,6 +1199,7 @@ async function handleEditarTarefa(e) {
   }
 }
 
+//Atualizar status de uma tarefa na API    
 async function updateTaskStatus(id, status) {
   try {
     await fetchWithAuth(`${baseUrl}/usuariostarefas/tarefa/${id}`, {
@@ -1137,6 +1216,12 @@ async function updateTaskStatus(id, status) {
   }
 }
 
+//Buscar tarefas do usuário com detalhes completos
+//PROCESSO:                                                           
+//    1. Busca associações usuário-tarefa                              
+//    2. Para cada associação, busca detalhes completos da tarefa      
+//    3. Armazena no array global todasTarefas                         
+//    4. Aplica filtros e renderiza               
 async function carregarTarefas() {
   try {
     const data = await fetchWithAuth(`${baseUrl}/usuariostarefas/${userId}`);
@@ -1147,8 +1232,8 @@ async function carregarTarefas() {
     for (const rel of associacoes) {
       const tarefa = await buscarTarefa(rel.tarefas_idTarefa);
       todasTarefas.push({
-        ...rel,
-        tarefa: tarefa
+        ...rel,  // Inclui dados da associação
+        tarefa: tarefa // Inclui dados completos da tarefa
       });
     }
 
@@ -1159,6 +1244,7 @@ async function carregarTarefas() {
   }
 }
 
+//Buscar detalhes de uma tarefa específica
 async function buscarTarefa(id) {
   try {
     const data = await fetchWithAuth(`${baseUrl}/tarefas/${id}`);
@@ -1180,6 +1266,8 @@ function editarStatus(id, status) {
   }
 }
 
+//Sistema de "lembretes fixos" para tarefas importantes 
+//ARMAZENAMENTO: localStorage (persiste entre sessões)
 function fixarPostit(titulo) {
   if (!elements.postit) return;
 
@@ -1208,7 +1296,13 @@ function carregarPostit() {
   }
 }
 
-
+//Renderizar tabela HTML de tarefas 
+//PROCESSO:                                                           
+//    1. Limpa tbody                                                    
+//    2. Para cada tarefa, cria uma linha <tr>                         
+//    3. Adiciona botões de ação (editar, fixar)  
+//    4. Conta status para gráfico                                                           
+//    5. Atualiza ícones Lucide  
 function renderizarTabelaTarefas(tarefas) {
   elements.tbodyTarefas.innerHTML = "";
   let contadores = { Pendente: 0, "Em andamento": 0, "Concluída": 0 };
@@ -1254,6 +1348,8 @@ function renderizarTabelaTarefas(tarefas) {
   }
 }
 
+//Criar gráfico de pizza mostrando status das tarefas
+//Chart.js (tipo: doughnut)
 function gerarGraficoTarefas({ Pendente, "Em andamento": EmAndamento, "Concluída": Concluida }) {
   const ctx = document.getElementById("graficoTarefas");
   if (!ctx) return;
@@ -1276,9 +1372,9 @@ function gerarGraficoTarefas({ Pendente, "Em andamento": EmAndamento, "Concluíd
       datasets: [{
         data: [Pendente, EmAndamento, Concluida],
         backgroundColor: [
-          "hsl(45, 93%, 58%)",
-          "hsl(199, 89%, 48%)",
-          "hsl(142, 69%, 58%)"
+          "hsl(45, 93%, 58%)", // Amarelo
+          "hsl(199, 89%, 48%)", // Azul
+          "hsl(142, 69%, 58%)" // Verde
         ],
         borderWidth: 3,
         borderColor: "#fff",
@@ -1316,7 +1412,7 @@ function gerarGraficoTarefas({ Pendente, "Em andamento": EmAndamento, "Concluíd
           }
         }
       },
-      cutout: '60%',
+      cutout: '60%', // Tamanho do buraco central
       animation: {
         animateRotate: true,
         duration: 1000
@@ -1326,6 +1422,9 @@ function gerarGraficoTarefas({ Pendente, "Em andamento": EmAndamento, "Concluíd
 }
 
 /* ---------- SISTEMA DE FILTROS ---------- */
+
+//Adicionar um novo filtro a uma seção 
+//secao ('tarefas', 'lancamentos', etc), tipo ('busca', 'status', etc)
 function adicionarFiltro(secao, tipo) {
   if (filtrosAtivos[secao][tipo]) {
     mostrarRespostaPopup("Este filtro já está ativo", false);
@@ -1336,12 +1435,18 @@ function adicionarFiltro(secao, tipo) {
   aplicarFiltros(secao);
 }
 
+//Remover um filtro ativo 
 function removerFiltro(secao, tipo) {
   delete filtrosAtivos[secao][tipo];
   renderizarFiltros(secao);
   aplicarFiltros(secao);
 }
 
+//Criar UI dinâmica dos filtros ativos        
+//PROCESSO:                                                           
+//    1. Limpa container de filtros                                     
+//    2. Para cada filtro ativo, cria elemento HTML apropriado         
+//    3. Adiciona event listeners aos inputs/selects              
 function renderizarFiltros(secao) {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
   const container = document.getElementById(`filtrosAtivos${capitalize(secao)}`);
@@ -1357,6 +1462,7 @@ function renderizarFiltros(secao) {
     let content = '';
     let titulo = '';
 
+    // Cria UI específica para cada tipo de filtro
     switch (tipo) {
       case 'busca':
         titulo = '🔍 Buscar';
@@ -1546,28 +1652,33 @@ function adicionarEventosFiltros(secao) {
   }
 }
 
+//Aplicar todos os filtros ativos e renderizar resultado
+//ALGORITMO:                                                          
+//    1. Copia array original de dados                                  
+//    2. Aplica cada filtro sequencialmente                            
+//    3. Aplica ordenação se configurada                               
+//    4. Renderiza apenas dados filtrados   
 function aplicarFiltros(secao) {
   let dadosOriginais = [];
-
-  // Salva dados originais antes de filtrar
   switch (secao) {
     case 'tarefas':
-      dadosOriginais = [...todasTarefas];
+      dadosOriginais = Array.isArray(todasTarefas) ? [...todasTarefas] : [];
       break;
     case 'lancamentos':
-      dadosOriginais = [...todosLancamentos];
+      dadosOriginais = Array.isArray(todosLancamentos) ? [...todosLancamentos] : [];
       break;
     case 'extratos':
-      dadosOriginais = [...todosExtratos];
+      dadosOriginais = Array.isArray(todosExtratos) ? [...todosExtratos] : [];
       break;
     case 'indices':
-      dadosOriginais = [...todosIndices];
+      dadosOriginais = Array.isArray(todosIndices) ? [...todosIndices] : [];
       break;
     case 'produtos':
-      dadosOriginais = [...todosProdutos];
+      dadosOriginais = Array.isArray(todosProdutos) ? [...todosProdutos] : [];
       break;
+    default:
+      dadosOriginais = [];
   }
-
   let dados = [...dadosOriginais];
   const filtros = filtrosAtivos[secao];
 
@@ -1661,6 +1772,7 @@ function limparFiltros(secao) {
   aplicarFiltros(secao);
 }
 
+//Buscar texto em todos os valores de um objeto   
 function buscarEmObjeto(obj, busca) {
   if (obj.tarefa) {
     return Object.values(obj.tarefa).some(val =>
@@ -1706,6 +1818,8 @@ function filtrarPorData(item, dataDe, dataAte, secao) {
   return true;
 }
 
+//Ordenar array de dados por critério específico
+//criterio - Formato "campo-ordem" ex: "valor-desc"  
 function ordenarDados(dados, criterio, secao) {
   dados.sort((a, b) => {
     const [campo, ordem] = criterio.split('-');
@@ -1840,6 +1954,14 @@ function renderizarTabela(secao, dados) {
 }
 
 /* ---------- FUNCIONALIDADES FINANCEIRAS ---------- */
+
+//Calcular e exibir indicadores financeiros principais   
+//KPIs CALCULADOS:                                                    
+//    - Total de receitas do mês atual                                  
+//    - Total de despesas do mês atual                                  
+//    - Saldo atual (baseado em extratos)                              
+//    - Quantidade de lançamentos em aberto  
+
 async function carregarKPIsFinanceiros() {
   try {
     const [lancamentosRes, extratosRes] = await Promise.all([
@@ -1859,6 +1981,12 @@ async function carregarKPIsFinanceiros() {
   }
 }
 
+
+//Processar dados brutos e calcular KPIs  
+// Filtra lançamentos do mês atual                                
+//    - Soma receitas e despesas separadamente                         
+//    - Calcula saldo baseado em extratos (Entrada - Saída)           
+//    - Conta lançamentos com status "Em aberto" ou "Pendente" 
 function calcularKPIs(lancamentos, extratos) {
   const mesAtual = new Date().getMonth();
   const anoAtual = new Date().getFullYear();
@@ -1868,10 +1996,12 @@ function calcularKPIs(lancamentos, extratos) {
   let saldo = 0;
   let lancamentosAbertos = 0;
 
+  // Processa lançamentos
   lancamentos.forEach(l => {
     const vencimento = l.vencimentoLancamento ? new Date(l.vencimentoLancamento) : null;
     const valor = parseFloat(l.valorLancamento || 0);
 
+    // Soma receitas/despesas do mês atual
     if (vencimento && vencimento.getMonth() === mesAtual && vencimento.getFullYear() === anoAtual) {
       if (l.classificacaoLancamento === "Receita") {
         totalReceitas += valor;
@@ -1880,11 +2010,13 @@ function calcularKPIs(lancamentos, extratos) {
       }
     }
 
+    // Conta lançamentos em aberto
     if (["Em aberto", "Pendente"].includes(l.statusLancamento)) {
       lancamentosAbertos++;
     }
   });
 
+  // Calcula saldo total dos extratos
   extratos.forEach(e => {
     const valor = parseFloat(e.valorExtrato || 0);
     if (e.tipoExtrato === "Entrada") {
@@ -1903,6 +2035,7 @@ function calcularKPIs(lancamentos, extratos) {
   };
 }
 
+//Atualizar elementos HTML com valores dos KPIs 
 function atualizarKPIsNaInterface(kpis) {
   const formatarMoedaKPI = (valor) => `R$ ${Math.abs(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
@@ -1915,6 +2048,7 @@ function atualizarKPIsNaInterface(kpis) {
   }
 
   if (elements.saldoAtual) {
+    // Adiciona classe CSS baseada no saldo (positivo=verde, negativo=vermelho)
     elements.saldoAtual.textContent = formatarMoedaKPI(kpis.saldo);
     elements.saldoAtual.className = kpis.saldo >= 0 ? 'text-success' : 'text-error';
   }
@@ -1923,6 +2057,8 @@ function atualizarKPIsNaInterface(kpis) {
     elements.lancamentosEmAbertoCount.textContent = kpis.lancamentosAbertos;
   }
 }
+
+//Gerar gráfico de fluxo de caixa mensal 
 
 async function carregarFluxoCaixaMensal() {
   try {
@@ -1937,6 +2073,7 @@ async function carregarFluxoCaixaMensal() {
   }
 }
 
+//Agrupar extratos por mês e calcular receitas/despesas
 function processarFluxoCaixa(extratos) {
   const fluxo = {};
 
@@ -1965,6 +2102,7 @@ function processarFluxoCaixa(extratos) {
   return fluxo;
 }
 
+//Criar gráfico Chart.js de fluxo de caixa 
 function gerarGraficoFluxoCaixa(fluxoCaixaMensal) {
   const ctx = document.getElementById("graficoFluxoCaixa");
   if (!ctx) return;
@@ -2219,6 +2357,13 @@ function gerarGraficoExtratosTipo() {
 }
 
 /* ---------- LANÇAMENTOS CRUD ---------- */
+
+//Abrir modal para criar novo lançamento 
+//PROCESSO:                                                           
+//    1. Reseta o formulário                                            
+//    2. Limpa ID (indica criação, não edição)                         
+//    3. Preenche selects de categorias/subcategorias                  
+//    4. Exibe o modal 
 function abrirModalCriarLancamento() {
   const form = document.getElementById("formLancamento");
   if (form) form.reset();
@@ -2240,6 +2385,12 @@ function fecharModalLancamento() {
   }
 }
 
+//Abrir modal para editar lançamento existente
+//PROCESSO:                                                           
+//    1. Busca lançamento no array em cache                            
+//    2. Preenche todos os campos do formulário                        
+//    3. Preenche selects (categoria primeiro, depois subcategoria)    
+//    4. Exibe modal 
 async function editarLancamento(id) {
   const lancamento = todosLancamentos.find(l => l.idLancamento === id);
   if (!lancamento) {
@@ -2274,6 +2425,10 @@ async function editarLancamento(id) {
   }
 }
 
+//Criar ou atualizar lançamento  
+//LÓGICA:                                                             
+//    - Se ID existe: PUT (atualização)                                
+//    - Se ID vazio: POST (criação)   
 async function salvarLancamento(ev) {
   ev.preventDefault();
 
@@ -3228,114 +3383,6 @@ function inicializarCalendario() {
   });
 }
 
-/* ---------- EXPORTAÇÃO XML ---------- */
-async function gerarXMLFinanceiro() {
-  try {
-    mostrarRespostaPopup("Gerando arquivo XML...", true, 1000);
-
-    const [lancRes, extrRes, prodRes, indRes] = await Promise.all([
-      fetchData(`${baseUrl}/lancamentos`),
-      fetchData(`${baseUrl}/extratos`),
-      fetchData(`${baseUrl}/produtos`),
-      fetchData(`${baseUrl}/indices`)
-    ]);
-
-    const xmlContent = construirXMLFinanceiro({
-      lancamentos: lancRes.data || [],
-      extratos: extrRes.data || [],
-      produtos: prodRes.data || [],
-      indices: indRes.data || []
-    });
-
-    baixarArquivo(xmlContent, 'relatorio_financeiro.xml', 'application/xml');
-    mostrarRespostaPopup("Arquivo XML exportado com sucesso!", true);
-
-  } catch (err) {
-    console.error("Erro ao gerar XML:", err);
-    mostrarRespostaPopup("Erro ao gerar arquivo XML: " + err.message, false);
-  }
-}
-
-function construirXMLFinanceiro({ lancamentos, extratos, produtos, indices }) {
-  const dataExportacao = new Date().toISOString();
-
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<relatorio_financeiro data_exportacao="${dataExportacao}">
-  <resumo>
-    <total_lancamentos>${lancamentos.length}</total_lancamentos>
-    <total_extratos>${extratos.length}</total_extratos>
-    <total_produtos>${produtos.length}</total_produtos>
-    <total_indices>${indices.length}</total_indices>
-  </resumo>
-
-  <lancamentos>`;
-
-  lancamentos.forEach(l => {
-    xml += `
-    <lancamento>
-      <id>${l.idLancamento}</id>
-      <titulo>${escapeXml(l.tituloLancamento || "")}</titulo>
-      <descricao>${escapeXml(l.descricaoLancamento || "")}</descricao>
-      <valor>${l.valorLancamento || 0}</valor>
-      <vencimento>${l.vencimentoLancamento || ""}</vencimento>
-      <status>${escapeXml(l.statusLancamento || "")}</status>
-      <classificacao>${escapeXml(l.classificacaoLancamento || "")}</classificacao>
-    </lancamento>`;
-  });
-
-  xml += `
-  </lancamentos>
-
-  <extratos>`;
-
-  extratos.forEach(e => {
-    xml += `
-    <extrato>
-      <id>${e.idExtrato}</id>
-      <tipo>${escapeXml(e.tipoExtrato || "")}</tipo>
-      <valor>${e.valorExtrato || 0}</valor>
-      <data>${e.dataExtrato || ""}</data>
-      <produto>${e.idProduto || ""}</produto>
-    </extrato>`;
-  });
-
-  xml += `
-  </extratos>
-
-  <produtos>`;
-
-  produtos.forEach(p => {
-    xml += `
-    <produto>
-      <id>${p.idProduto}</id>
-      <nome>${escapeXml(p.nomeProduto || "")}</nome>
-      <custo>${p.custoProduto || 0}</custo>
-      <segmento>${p.idSegmento || ""}</segmento>
-    </produto>`;
-  });
-
-  xml += `
-  </produtos>
-
-  <indices>`;
-
-  indices.forEach(i => {
-    xml += `
-    <indice>
-      <id>${i.idIndice}</id>
-      <nome>${escapeXml(i.nomeIndice || "")}</nome>
-      <taxa>${i.taxaIndice || 0}</taxa>
-      <ano>${i.anoIndice || ""}</ano>
-    </indice>`;
-  });
-
-  xml += `
-  </indices>
-</relatorio_financeiro>`;
-
-  return xml;
-}
-
 function escapeXml(unsafe) {
   return String(unsafe || '').replace(/[<>&'"]/g, function (c) {
     switch (c) {
@@ -3346,21 +3393,6 @@ function escapeXml(unsafe) {
       case '"': return '&quot;';
     }
   });
-}
-
-function baixarArquivo(conteudo, nomeArquivo, tipoMime) {
-  const blob = new Blob([conteudo], { type: tipoMime });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = nomeArquivo;
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  URL.revokeObjectURL(url);
 }
 
 /* ---------- LIMPEZA ---------- */

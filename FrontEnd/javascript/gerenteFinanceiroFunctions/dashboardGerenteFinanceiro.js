@@ -4,6 +4,7 @@
 const baseUrl = 'http://localhost:3000';
 
 // Função auxiliar para obter o token do localStorage
+//Recuperar e validar o token JWT do localStorag
 function obterToken() {
   const authData = localStorage.getItem("authToken");
 
@@ -45,7 +46,8 @@ function pegarUserIdDoToken() {
   }
 }
 
-// Fetch com autenticação
+//Fazer requisições HTTP com autenticação automática 
+//RETORNO: Promise com dados JSON da resposta 
 function fetchWithAuth(url, options = {}) {
   const token = obterToken();
 
@@ -82,7 +84,8 @@ function fetchWithAuth(url, options = {}) {
   });
 }
 
-// Sistema de notificações moderno
+// Sistema de notificações
+//Exibir notificações toast animadas para o usuário
 function mostrarRespostaPopup(mensagem, sucesso = true, tempo = 3500) {
   const existingNotifications = document.querySelectorAll('.notification');
   existingNotifications.forEach(n => n.remove());
@@ -181,12 +184,15 @@ function exibirToast(titulo, descricao, tipo = 'success') {
 }
 
 /* ---------- ESTADO GLOBAL ---------- */
+
+//id do usuário logado
 const userId = pegarUserIdDoToken();
 let dataCadastroAtual = null;
 let idCargoAtual = null;
 let calendarioInstancia = null;
 
 // Dados em cache
+//Armazenam dados em memória para evitar requisições desnecessárias à API
 let todasAsTarefas = [];
 let todosLancamentos = [];
 let todosExtratos = [];
@@ -205,6 +211,7 @@ let todosOrcamentosTri = [];
 
 
 // Filtros ativos
+//Sistema de filtros por seção
 let filtrosTarefasAtivos = {};
 let filtrosAtivos = {
   lancamentos: {},
@@ -216,7 +223,7 @@ let filtrosAtivos = {
   orcamentosTri: {}
 };
 
-// Instâncias de gráficos
+// Instâncias de gráficos - Objetos Chart.js ou similares
 let graficoInstances = {
   tarefas: null,
   fluxoCaixa: null,
@@ -230,6 +237,7 @@ let graficoInstances = {
 };
 
 /* ---------- ELEMENTOS DOM ---------- */
+//Referências aos elementos HTML principais  
 const elements = {
   tbodyTarefas: document.getElementById("tbodyTarefas"),
   tbodyLancamentos: document.getElementById("tbodyLancamentos"),
@@ -278,6 +286,8 @@ const navBtns = document.querySelectorAll(".btn-nav");
 const paineis = document.querySelectorAll(".content-section");
 
 /* ---------- FUNÇÕES UTILITÁRIAS ---------- */
+
+//Prevenir ataques XSS escapando caracteres especiais
 function escaparHTML(texto) {
   return (texto || '').replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -286,12 +296,14 @@ function escaparHTML(texto) {
     .replace(/'/g, "&#039;");
 }
 
+//Normalizar texto para comparações (remove acentos)
 function normalizar(txt) {
   return (txt || "").toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+//Formatar data ISO para DD/MM/YYYY HH:MM 
 function formatarDataExibicao(dataISO) {
   if (!dataISO) return '-';
   try {
@@ -309,11 +321,13 @@ function formatarDataExibicao(dataISO) {
   }
 }
 
+//Formatar data ISO para DD/MM/YYYY (sem hora)  
 function formatarData(dataStr) {
   if (!dataStr) return '-';
   return new Date(dataStr).toLocaleDateString('pt-BR');
 }
 
+//Formatar número para moeda brasileira (R$ 1.234,56) 
 function formatarMoeda(valor) {
   return `R$ ${parseFloat(valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
@@ -324,6 +338,7 @@ function atualizarIconesLucide() {
   }
 }
 
+// Função genérica para buscar dados de qualquer endpoint
 async function fetchData(url) {
   try {
     const res = await fetchWithAuth(url);
@@ -415,7 +430,7 @@ function renderizarTabelaAtribuicoes(atribuicoes) {
         <button class="btn-action btn-edit" onclick="editarAtribuicao(${atrib.idAtribuicao})">
           <i data-lucide="edit"></i>
         </button>
-        <button class="btn-action btn-secondary-action" onclick="excluirAtribuicao(${atrib.idAtribuicao})">
+        <button class="btn-action btn-secondary-action" onclick="excluirAtribuicao(${atrib.idUsuario}, ${atrib.tarefas_idTarefa})">
           <i data-lucide="trash-2"></i>
         </button>
       </td>
@@ -648,33 +663,57 @@ function limparFiltrosAtribuicoes() {
 async function salvarAtribuicao(ev) {
   ev.preventDefault();
 
-  const idUsuario = document.getElementById("selectUsuario").value;
-  const idTarefa = document.getElementById("selectTarefa").value;
+  const idUsuario = parseInt(document.getElementById("selectUsuario").value);
+  const idTarefa = parseInt(document.getElementById("selectTarefa").value);
   const status = document.getElementById("selectStatusAtribuicao").value;
 
+  console.log("Valores capturados:", { idUsuario, idTarefa, status }); // DEBUG
+
   if (!idUsuario || !idTarefa) {
-    mostrarRespostaPopup("Selecione usuário e tarefa!", false);
+    exibirToast("Erro", "Selecione usuário e tarefa", "error");
     return;
   }
 
-  const dados = {
-    idUsuario: parseInt(idUsuario),
-    tarefas_idTarefa: parseInt(idTarefa),
-    statusAtribuicao: status
-  };
-
   try {
-    await fetchWithAuth(`${baseUrl}/usuariostarefas`, {
-      method: "POST",
-      body: JSON.stringify(dados)
-    });
-    exibirToast("Sucesso", "Atribuição criada com sucesso!");
-    document.getElementById("modalAtribuicao").classList.add("oculto");
-    document.getElementById("formAtribuicao").reset();
-    await carregarAtribuicoesComFiltros();
-  } catch (err) {
-    console.error("Erro ao salvar atribuição:", err);
-    exibirToast("Erro", "Falha ao salvar atribuição", "error");
+    // IMPORTANTE: Verificar se associação existe ANTES de criar
+    const resGet = await fetchWithAuth(`${baseUrl}/usuariostarefas`);
+    const dataGet = resGet;
+    const assocExiste = dataGet.associacoes?.some(
+      a => a.usuarios_idUsuario === idUsuario && a.tarefas_idTarefa === idTarefa
+    );
+
+    let response, data;
+    if (assocExiste) {
+      // Atualizar associação existente
+      response = await fetchWithAuth(`${baseUrl}/usuariostarefas/${idUsuario}/${idTarefa}`, {
+        method: "PUT",
+        body: JSON.stringify({ status })
+      });
+    } else {
+      // Criar nova associação - FORMATO CORRETO
+      response = await fetchWithAuth(`${baseUrl}/usuariostarefas`, {
+        method: "POST",
+        body: JSON.stringify({
+          idUsuario: idUsuario,
+          idTarefa: idTarefa,      
+          status: status           
+        })
+      });
+    }
+
+    data = response;
+
+    if (data) {
+      exibirToast("Sucesso", assocExiste ? "Atribuição atualizada!" : "Atribuição criada!");
+      document.getElementById("modalAtribuicao").classList.add("oculto");
+      document.getElementById("formAtribuicao").reset();
+      await carregarAtribuicoesComFiltros();
+    } else {
+      exibirToast("Erro", data.message || "Operação falhou", "error");
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+    exibirToast("Erro", "Falha ao salvar atribuição: " + erro.message, "error");
   }
 }
 
@@ -690,10 +729,10 @@ async function editarAtribuicao(id) {
   document.getElementById("modalAtribuicao").classList.remove("oculto");
 }
 
-async function excluirAtribuicao(id) {
+async function excluirAtribuicao(idUsuario, idTarefa) {
   mostrarModalConfirmacao("Deseja excluir esta atribuição?", async () => {
     try {
-      await fetchWithAuth(`${baseUrl}/usuariostarefas/${id}`, {
+      await fetchWithAuth(`${baseUrl}/usuariostarefas/${idUsuario}/${idTarefa}`, {
         method: "DELETE"
       });
       exibirToast("Sucesso", "Atribuição excluída com sucesso!");
@@ -704,7 +743,6 @@ async function excluirAtribuicao(id) {
     }
   });
 }
-
 function abrirModalCriarOrcamentoAnual() {
   const form = document.getElementById("formOrcamentoAnual");
   if (form) form.reset();
@@ -1282,18 +1320,30 @@ function preencherSelectSubsegmentos(selectId, idSegmentoFiltro = null) {
 
 function preencherSelectTarefas(selectId) {
   const select = document.getElementById(selectId);
-  if (!select) return;
+  if (!select) {
+    console.error(`Select ${selectId} não encontrado!`);
+    return;
+  }
 
   select.innerHTML = '<option value="">Selecione uma tarefa...</option>';
+
+  console.log(`Preenchendo select ${selectId} com ${todasTarefasComTitulo.length} tarefas`);
+  console.log("Tarefas disponíveis:", todasTarefasComTitulo);
+
+  if (todasTarefasComTitulo.length === 0) {
+    select.innerHTML = '<option value="">Nenhuma tarefa disponível</option>';
+    return;
+  }
 
   todasTarefasComTitulo.forEach(tarefa => {
     const option = document.createElement('option');
     option.value = tarefa.idTarefa;
-    option.textContent = tarefa.tituloTarefa;
+    option.textContent = `${tarefa.idTarefa} - ${tarefa.tituloTarefa}`;
     select.appendChild(option);
   });
-}
 
+  console.log(`Select ${selectId} preenchido com ${select.options.length - 1} opções`);
+}
 function preencherSelectProdutos(selectId) {
   const select = document.getElementById(selectId);
   if (!select) {
@@ -1346,13 +1396,13 @@ function configurarListenersSegmentoSubsegmento() {
     });
   }
 
-  const selectSubsegmentoIndice = document.getElementById("idSubsegmentoIndice");
-  if (selectSubsegmentoIndice) {
-    selectSubsegmentoIndice.addEventListener("change", (e) => {
-      const idSegmento = e.target.value;
-      preencherSelectSubsegmentos("idSubsegmentoIndice", idSegmento || null);
-    });
-  }
+  /* const selectSubsegmentoIndice = document.getElementById("idSubsegmentoIndice");
+   if (selectSubsegmentoIndice) {
+     selectSubsegmentoIndice.addEventListener("change", (e) => {
+       const idSegmento = e.target.value;
+       preencherSelectSubsegmentos("idSubsegmentoIndice", idSegmento || null);
+     });
+   }*/
 }
 
 /* ---------- SISTEMA DE FILTROS PARA TAREFAS ---------- */
@@ -2630,6 +2680,18 @@ function configurarSeletoresFiltros() {
   });
 }
 function configurarBotoesModais() {
+
+  const btnNovaAtribuicao = document.getElementById("btnNovaAtribuicao");
+  if (btnNovaAtribuicao) {
+    btnNovaAtribuicao.addEventListener('click', async () => {
+      // ADICIONAR: Garantir que tarefas estão carregadas
+      if (todasTarefasComTitulo.length === 0) {
+        await carregarTarefasComTitulo();
+      }
+
+      abrirModalCriarAtribuicao();
+    });
+  }
   const btnNovoLancamento = document.getElementById("btnNovoLancamento");
   if (btnNovoLancamento) btnNovoLancamento.addEventListener("click", abrirModalCriarLancamento);
 
@@ -3343,6 +3405,22 @@ function gerarGraficoExtratosTipo() {
   });
 }
 
+function abrirModalCriarAtribuicao() {
+  const form = document.getElementById("formAtribuicao");
+  if (form) form.reset();
+
+  document.getElementById("modalTituloAtribuicao").textContent = "Nova Atribuição";
+
+  // IMPORTANTE: Carregar os selects
+  preencherSelectUsuarios();
+  preencherSelectTarefas("selectTarefa");
+
+  const modal = document.getElementById("modalAtribuicao");
+  if (modal) {
+    modal.classList.remove("oculto");
+  }
+}
+
 /* ---------- LANÇAMENTOS CRUD ---------- */
 function abrirModalCriarLancamento() {
   const form = document.getElementById("formLancamento");
@@ -3987,7 +4065,7 @@ function abrirModalCriarIndice() {
   document.getElementById("idIndice").value = "";
   document.getElementById("tituloModalIndice").textContent = "Novo Índice";
 
-  preencherSelectSubsegmentos("idSubsegmentoIndice");
+  preencherSelectSubsegmentos("idSubsegmentoIndice", null);
 
   if (elements.modais.indice) {
     elements.modais.indice.classList.remove("oculto");
@@ -4012,13 +4090,13 @@ async function editarIndice(id) {
   document.getElementById("taxaIndice").value = indice.taxaIndice || "";
   document.getElementById("anoIndice").value = indice.anoIndice || "";
 
-  // ADICIONAR - precisamos descobrir o idSegmento do subsegmento
-  const subsegmento = todosSubsegmentos.find(s => s.idSubsegmento == indice.idSubsegmento);
-  const idSegmento = subsegmento ? subsegmento.idSegmento : null;
 
+  preencherSelectSubsegmentos("idSubsegmentoIndice", null);
 
-  preencherSelectSubsegmentos("idSubsegmentoIndice", idSegmento);
-  document.getElementById("idSubsegmentoIndice").value = indice.idSubsegmento || "";
+  // Aguardar um momento para garantir que o select foi preenchido
+  setTimeout(() => {
+    document.getElementById("idSubsegmentoIndice").value = indice.idSubsegmento || "";
+  }, 50);
 
   document.getElementById("tituloModalIndice").textContent = "Editar Índice";
 
@@ -4031,23 +4109,39 @@ async function salvarIndice(ev) {
   ev.preventDefault();
 
   const id = document.getElementById("idIndice").value;
+
+  const nomeIndice = document.getElementById("nomeIndice").value.trim();
+  const taxaIndice = document.getElementById("taxaIndice").value;
+  const anoIndice = document.getElementById("anoIndice").value;
+  const idSubsegmento = document.getElementById("idSubsegmentoIndice").value;
+
+  // IMPORTANTE: anoIndice deve ser STRING, não INT
   const dados = {
-    nomeIndice: document.getElementById("nomeIndice").value,
-    taxaIndice: parseFloat(document.getElementById("taxaIndice").value || 0),
-    anoIndice: parseInt(document.getElementById("anoIndice").value) || null,
-    idSubsegmento: parseInt(document.getElementById("idSubsegmentoIndice").value) || null
+    nomeIndice: nomeIndice,
+    taxaIndice: parseFloat(taxaIndice),
+    anoIndice: anoIndice.trim(), // ← STRING, não parseInt!
+    idSubsegmento: parseInt(idSubsegmento)
   };
+
+  console.log("Dados do índice a enviar:", dados);
 
   const url = id ? `${baseUrl}/indices/${id}` : `${baseUrl}/indices`;
   const method = id ? "PUT" : "POST";
 
   try {
-    await fetchWithAuth(url, { method, body: JSON.stringify(dados) });
+    const response = await fetchWithAuth(url, {
+      method,
+      body: JSON.stringify(dados)
+    });
+
+    console.log("Resposta da API:", response);
+
     mostrarRespostaPopup("Índice salvo com sucesso!", true);
     fecharModalIndice();
-    carregarIndices();
+    await carregarIndices();
   } catch (err) {
     console.error("Erro ao salvar índice:", err);
+    console.error("Dados enviados:", dados);
     mostrarRespostaPopup("Erro ao salvar índice: " + err.message, false);
   }
 }

@@ -235,14 +235,8 @@
           </div>
         </div>
       </div>
-
-      <div class="section-header" style="margin-top: 2rem;">
-        <button class="btn-primary" id="btnExportarXML">
-          <i data-lucide="download" class="btn-icon"></i>
-          Exportar Dados (XML)
-        </button>
-      </div>
     </section>
+
 
     <!-- Painel Lançamentos -->
     <section class="content-section" id="painel-lancamentos">
@@ -404,6 +398,7 @@
         <div id="filtrosAtivosIndices" class="active-filters"></div>
       </div>
 
+      
       <div class="table-container">
         <table class="task-table">
           <thead>
@@ -492,6 +487,8 @@
   </main>
 
   <!-- Modais -->
+
+   <!-- Modal Recado -->
   <div class="modal-overlay modal oculto" id="modalRecado">
     <div class="modal-content">
       <div class="modal-header">
@@ -508,6 +505,7 @@
     </div>
   </div>
 
+    <!-- Modal Confirmação -->
   <div class="modal-overlay modal oculto" id="modalConfirmacao">
     <div class="modal-content">
       <div class="modal-header">
@@ -523,6 +521,7 @@
     </div>
   </div>
 
+  <!-- Modal Conclusão -->
   <div class="modal-overlay modal oculto" id="modalConclusao">
     <div class="modal-content">
       <div class="modal-header">
@@ -538,6 +537,7 @@
     </div>
   </div>
 
+  <!-- Modal Detalhes Tarefa -->
   <div class="modal-overlay modal oculto" id="modalDetalhesTarefa">
     <div class="modal-content">
       <div class="modal-header">
@@ -571,7 +571,7 @@
           </label>
         </div>
         <div class="form-group">
-          <label>Valor:<input type="number" id="valorLancamento" required></label>
+          <label>Valor:<input type="number" id="valorLancamento" step="0.01" required></label>
         </div>
         <div class="form-group">
           <label>Vencimento:<input type="date" id="vencimentoLancamento" required></label>
@@ -645,7 +645,7 @@
           </label>
         </div>
         <div class="form-group">
-          <label>Valor:<input type="number" id="valorExtrato" required></label>
+          <label>Valor:<input type="number" step="0.01" id="valorExtrato" required></label>
         </div>
         <div class="form-group">
           <label>Data:<input type="date" id="dataExtrato" required></label>
@@ -705,7 +705,7 @@
           <label>Nome:<input type="text" id="nomeProduto" required></label>
         </div>
         <div class="form-group">
-          <label>Custo:<input type="number" id="custoProduto" required></label>
+          <label>Custo:<input type="number" step="0.01" id="custoProduto" required></label>
         </div>
         <div class="form-group">
           <label>Segmento:
@@ -741,7 +741,7 @@
           <label>Nome:<input type="text" id="nomeIndice" required></label>
         </div>
         <div class="form-group">
-          <label>Taxa:<input type="number" id="taxaIndice" required></label>
+          <label>Taxa:<input type="number" step="0.01" id="taxaIndice" required></label>
         </div>
         <div class="form-group">
           <label>Ano:<input type="number" id="anoIndice" required></label>
